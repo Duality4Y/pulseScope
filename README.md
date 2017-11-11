@@ -22,9 +22,11 @@ from about 0 to ~8.8Khz
 # requirements.
 requires the following libraries in python:
 
+<pre>
 pygame
 numpy
 pyaudio
+</pre>
 
 # how to run
 
