@@ -34,13 +34,24 @@ simply run the pulseScope.py script with python3.6
 
 # Todo
 [] implement adjusting the scaling of the spectrum
+
 [] implement adjusting spectrum smoothing.
+
 [] implement selecting a windowing function on the spectrum
+
 [] implement adjusting windowing weight. (how much it adjusts a spectrum value)
+
 [] implement displaying general information like avg. freq. and wave form power
+
    and other data like the timebase used to show the wave form.
+
 [] possibly add a frequency scale under the spectrum.
+
 [] implement adjusting time base on waveforms.
+
 [] implement adjusting amplitude scaling.
+
 [] make the background grid actually be time/div like on a real scope.
+
 [] possibly add a function to subtract left and right channel from each other and show that as a wave form.
+
