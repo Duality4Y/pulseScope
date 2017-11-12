@@ -29,7 +29,6 @@ pyaudio
 </pre>
 
 # how to run
-
 simply run the pulseScope.py script with python3.6
 
 # Todo

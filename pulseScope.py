@@ -32,6 +32,12 @@ class Scope(object):
         pygame.display.set_caption("pulseScope")
         self.pointcalc = pointcalc
 
+        # attributes for waveform.
+        self.wave_data = []
+
+        # atributes applied for spectrum
+        self.freq_scale = 3
+        self.spectra_smooth = 3
         self.spectra = []
         self.window = None
         # self.window = numpy.hanning(self.screen_size[0])
@@ -40,15 +46,11 @@ class Scope(object):
         # self.window = numpy.hamming(self.screen_size[0])
         # self.window = numpy.kaiser(self.screen_size[0], 2.5)
 
-        self.spectra_smooth = 3
-        self.waves = []
 
     def drawSpectrum(self, data, samplerate):
         spectrum = numpy.fft.fft(data, n=5*len(data))
         real_spectrum = numpy.absolute(spectrum)
-        # print(numpy.fft.fftfreq(n=44100))
         width, height = self.screen_size
-
 
         self.spectra.append(real_spectrum)
         if len(self.spectra) > self.spectra_smooth:
@@ -63,9 +65,9 @@ class Scope(object):
             if math.isnan(value):
                 value = 0
             if self.window is not None:
-                y = height - int(value / (2**31) * self.window[x]) - 1
+                y = height - int(value / (2**31) * self.freq_scale * self.window[x]) - 1
             else:
-                y = height - int(value / (2**31)) - 1
+                y = height - int(value / (2**31) * self.freq_scale) - 1
             point = (x, y)
             points.append(point)
 
@@ -105,6 +107,9 @@ class Scope(object):
         return points
 
     def draw(self, data, samplerate):
+        if data == None:
+            return
+
         # clear screen
         self.surface.fill((0, 0, 0))
 
@@ -147,7 +152,7 @@ class Scope(object):
 if __name__ == "__main__":
     scope = Scope()
 
-    class TestAudio(object):
+    class AudioProg(object):
         def __init__(self):
             self.audioChannels = 2
             self.rate = 44100
@@ -182,13 +187,16 @@ if __name__ == "__main__":
 
         def process(self):
             while self.stream.is_active():
-                if self.new_data and self.data != None:
-                    if scope != None:
-                        scope.process()
-                        scope.draw(self.data, self.rate)
-                    self.new_data = False
-                    time.sleep(1. / 30)
-    with TestAudio() as ta:
+                # if self.new_data and self.data != None:
+                #     if scope != None:
+                #         scope.process()
+                #         scope.draw(self.data, self.rate)
+                #     self.new_data = False
+                if scope != None:
+                    scope.process()
+                    scope.draw(self.data, self.rate)
+                time.sleep(1. / 30)
+    with AudioProg() as ta:
         ta.process()
 
 """
