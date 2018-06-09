@@ -1,0 +1,560 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+		]
+	},
+	"buffers":
+	[
+		{
+			"file": "pulseScope.py",
+			"settings":
+			{
+				"buffer_size": 7843,
+				"line_ending": "Unix"
+			}
+		}
+	],
+	"build_system": "",
+	"build_system_choices":
+	[
+	],
+	"build_varint": "",
+	"command_palette":
+	{
+		"height": 232.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"install",
+				"Package Control: Install Package"
+			],
+			[
+				"gdb",
+				"Preferences: SublimeGDB Settings – Default"
+			],
+			[
+				"sublime",
+				"Preferences: SublimeGDB Settings – User"
+			],
+			[
+				"packa",
+				"Package Control: Install Package"
+			],
+			[
+				"remove",
+				"Package Control: Remove Package"
+			],
+			[
+				"syntax",
+				"Set Syntax: C++11"
+			],
+			[
+				"gitgutter",
+				"GitGutter: Compare Against Branch"
+			],
+			[
+				"toggle",
+				"SublimeLinter: Toggle Linter"
+			],
+			[
+				"instal",
+				"Package Control: Install Package"
+			],
+			[
+				"lint",
+				"Preferences: SublimeLinter Settings – Default"
+			],
+			[
+				"linter",
+				"SublimeLinter: Choose Lint Mode"
+			],
+			[
+				"isnta",
+				"Package Control: Install Package"
+			],
+			[
+				"Package Control: ",
+				"Package Control: Remove Package"
+			],
+			[
+				"isntall",
+				"Package Control: Install Package"
+			],
+			[
+				"install ",
+				"Package Control: Install Package"
+			],
+			[
+				"r",
+				"Package Control: Remove Repository"
+			],
+			[
+				"add",
+				"Package Control: Add Repository"
+			],
+			[
+				"pack",
+				"Package Control: Upgrade Package"
+			],
+			[
+				"disab",
+				"Package Control: Disable Package"
+			],
+			[
+				"enable",
+				"Package Control: Enable Package"
+			],
+			[
+				"dis",
+				"Package Control: Disable Package"
+			],
+			[
+				"package",
+				"Package Control: Enable Package"
+			],
+			[
+				"install pack",
+				"Package Control: Install Package"
+			],
+			[
+				"pacak",
+				"Package Control: Install Package"
+			],
+			[
+				"package ",
+				"Package Control: Install Package"
+			],
+			[
+				"c ",
+				"Set Syntax: C"
+			],
+			[
+				"assemb",
+				"Set Syntax: Assembly x86 (NASM)"
+			],
+			[
+				"Package Control: pack",
+				"Package Control: Enable Package"
+			],
+			[
+				"disable",
+				"Package Control: Disable Package"
+			],
+			[
+				"add ",
+				"Package Control: Add Repository"
+			],
+			[
+				"Package Control: install",
+				"Package Control: Install Package"
+			],
+			[
+				"Package Control: remove ",
+				"Package Control: Remove Package"
+			],
+			[
+				"git push",
+				"Git: Push Current Branch"
+			],
+			[
+				"git quick",
+				"Git: Quick Commit"
+			],
+			[
+				"git add ",
+				"Git: Add Current File"
+			],
+			[
+				"git add",
+				"Git: Add Current File"
+			],
+			[
+				"git log",
+				"Git: Log Current File"
+			],
+			[
+				"git diff tool Cur",
+				"Git: Diff Tool Current File"
+			],
+			[
+				"git diff",
+				"Git: Diff Tool All"
+			],
+			[
+				"git push ",
+				"Git: Push"
+			],
+			[
+				"git quic",
+				"Git: Quick Commit"
+			],
+			[
+				"git add .",
+				"Git: Add..."
+			],
+			[
+				"git commit ",
+				"Git: Commit"
+			],
+			[
+				"Package Control: inst",
+				"Package Control: Install Package"
+			]
+		],
+		"width": 503.0
+	},
+	"console":
+	{
+		"height": 164.0,
+		"history":
+		[
+			"import urllib.request,os,hashlib; h = 'df21e130d211cfc94d9b0905775a7c0f' + '1e3d39e33b79698005270310898eea76'; pf = 'Package Control.sublime-package'; ipp = sublime.installed_packages_path(); urllib.request.install_opener( urllib.request.build_opener( urllib.request.ProxyHandler()) ); by = urllib.request.urlopen( 'http://packagecontrol.io/' + pf.replace(' ', '%20')).read(); dh = hashlib.sha256(by).hexdigest(); print('Error validating download (got %s instead of %s), please try manual install' % (dh, h)) if dh != h else open(os.path.join( ipp, pf), 'wb' ).write(by)",
+			"run",
+			"print('Error validating download (got %s instead of %s), please try manual install' % (dh, h)) if dh != h else open(os.path.join( ipp, pf), 'wb' ).write(by)",
+			"dh = hashlib.sha256(by).hexdigest()",
+			"by = urllib.request.urlopen( 'http://packagecontrol.io/' + pf.replace(' ', '%20')).read()",
+			"urllib.request.install_opener( urllib.request.build_opener( urllib.request.ProxyHandler()) )",
+			"ipp = sublime.installed_packages_path()",
+			"pf = 'Package Control.sublime-package'",
+			"h = 'df21e130d211cfc94d9b0905775a7c0f' + '1e3d39e33b79698005270310898eea76'",
+			"import urllib.request,os,hashlib",
+			"import urllib.request,os,hashlib; h = 'df21e130d211cfc94d9b0905775a7c0f' + '1e3d39e33b79698005270310898eea76'; pf = 'Package Control.sublime-package'; ipp = sublime.installed_packages_path(); urllib.request.install_opener( urllib.request.build_opener( urllib.request.ProxyHandler()) ); by = urllib.request.urlopen( 'http://packagecontrol.io/' + pf.replace(' ', '%20')).read(); dh = hashlib.sha256(by).hexdigest(); print('Error validating download (got %s instead of %s), please try manual install' % (dh, h)) if dh != h else open(os.path.join( ipp, pf), 'wb' ).write(by)",
+			"f = t.open('/home/robert/connect.sh', 'w')",
+			"f = t.open('/home/robert/connect.sh', 'rw')",
+			"t.append('tr a-z A-Z', '--')",
+			"t.append(tr a-z A-Z', '--')",
+			"t = pipes.Template()",
+			"import pipes",
+			"import test.py",
+			"mp = os.pipe(\"./connect /dev/ttyUSB0 115200\")",
+			"dir(os)",
+			"import sys",
+			"import os",
+			"import urllib.request,os,hashlib; h = '2915d1851351e5ee549c20394736b442' + '8bc59f460fa1548d1514676163dafc88'; pf = 'Package Control.sublime-package'; ipp = sublime.installed_packages_path(); urllib.request.install_opener( urllib.request.build_opener( urllib.request.ProxyHandler()) ); by = urllib.request.urlopen( 'http://packagecontrol.io/' + pf.replace(' ', '%20')).read(); dh = hashlib.sha256(by).hexdigest(); print('Error validating download (got %s instead of %s), please try manual install' % (dh, h)) if dh != h else open(os.path.join( ipp, pf), 'wb' ).write(by) ",
+			"dir(sublime)",
+			"help(sublime)",
+			"dir(window)",
+			"dir(sheet)",
+			"dir(sublime)",
+			"dir()",
+			"dir",
+			"compile_sketch",
+			"import serial",
+			"import Serial",
+			"import",
+			"exit",
+			"help",
+			"help(sublime)",
+			"print(dir(sublime))",
+			"dir(sublime)",
+			"dir()",
+			"for thing in dir(sys): print thing ;",
+			"for thing in dir(sys): print thing",
+			"for thing in dir(sys):",
+			"dir(sys)",
+			"import sys",
+			"import main",
+			"print(\"hi\")",
+			"print(hi)",
+			"hi"
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"file_history":
+	[
+		"/home/robert/Documents/projects/py-ledart/Ledart/DeviceInterfaces.py",
+		"/home/robert/Documents/projects/temp/py-ledart/Ledart/configs/pattern_conf.py",
+		"/home/robert/Documents/projects/py-ledart/Ledart/Patterns/VUmeter.py",
+		"/home/robert/Documents/projects/py-ledart/Ledart/Patterns/Plasma.py",
+		"/home/robert/Documents/projects/py-ledart/Ledart/Patterns/Sim.py",
+		"/home/robert/Documents/projects/py-ledart/Ledart/Lmcp.py",
+		"/home/robert/Documents/projects/py-ledart/Ledart/utils.py",
+		"/home/robert/Documents/projects/py-ledart/Ledart/Tools/Graphics/Surface.py",
+		"/home/robert/Documents/projects/py-ledart/Ledart/Patterns/VideoPlay.py",
+		"/home/robert/Documents/projects/py-ledart/Ledart/ArgumentParser.py",
+		"/home/robert/Documents/projects/py-ledart/Ledart/Artnet.py",
+		"/home/robert/Documents/projects/py-ledart/Ledart/Filter.py",
+		"/home/robert/Documents/projects/py-ledart/Ledart/__main__.py",
+		"/home/robert/Documents/projects/py-ledart/Ledart/runPatternJob.py",
+		"/home/robert/Documents/projects/py-ledart/Ledart/Patterns/Life/life.py",
+		"/home/robert/Documents/projects/py-ledart/Ledart/Tools/Graphics/Graphics.py",
+		"/home/robert/Documents/projects/py-ledart/Ledart/configs/pattern_conf.py",
+		"/home/robert/Documents/projects/py-ledart/Ledart/Tools/Graphics/__init__.py",
+		"/home/robert/Documents/projects/py-ledart/Ledart/Tools/Graphics/ConvertColors.py",
+		"/home/robert/Documents/projects/py-ledart/Ledart/Tools/Graphics/Imaged.py",
+		"/home/robert/Documents/projects/py-ledart/Ledart/MatrixSim/MatrixScreen.py",
+		"/home/robert/Documents/projects/py-ledart/Ledart/MatrixSim/__init__.py",
+		"/home/robert/Documents/projects/py-ledart/Ledart/MatrixSim/Interfaces/__init__.py",
+		"/home/robert/Documents/projects/py-ledart/Ledart/MatrixSim/Interfaces/PygameInterface.py",
+		"/home/robert/Documents/projects/py-ledart/Ledart/MatrixSim/Interfaces/OpenGlInterface.py",
+		"/home/robert/Documents/projects/py-ledart/Ledart/Ffmpegstreamer.py",
+		"/home/duality/Documents/projects/py-ledart/Ledart/Filter.py",
+		"/home/duality/Documents/projects/py-ledart/Ledart/DeviceInterfaces.py",
+		"/home/duality/Documents/projects/py-ledart/Ledart/runPatternJob.py",
+		"/home/duality/Documents/projects/py-ledart/Ledart/Ffmpegstreamer.py",
+		"/home/duality/Documents/projects/py-ledart/Ledart/MatrixSim/MatrixScreen.py",
+		"/home/duality/testcpp/main.cpp",
+		"/home/duality/Documents/projects/byob/main.py",
+		"/home/duality/Documents/projects/py-ledart/Ledart/Patterns/VideoPlay.py",
+		"/home/duality/Documents/projects/py-ledart/Ledart/Patterns/Fft.py",
+		"/home/duality/Documents/projects/py-ledart/Ledart/Patterns/VUmeter.py",
+		"/home/duality/Documents/projects/py-ledart/Ledart/utils.py",
+		"/home/duality/Documents/projects/py-ledart/Ledart/MatrixSim/Interfaces/PygameInterface.py",
+		"/home/duality/Documents/projects/ledart_streaming/main.py",
+		"/home/duality/Documents/projects/py-ledart/Ledart/Lmcp.py",
+		"/home/duality/Documents/projects/py-ledart/Ledart/Patterns/MetaBalls.py",
+		"/home/duality/Documents/projects/py-ledart/Ledart/__init__.py",
+		"/home/duality/Documents/projects/py-ledart/Ffmpegstreamer.py",
+		"/home/duality/Documents/projects/py-ledart/Ledart/configs/pattern_conf.py",
+		"/home/duality/Documents/projects/py-ledart/Ledart/Patterns/SpiroGraph.py",
+		"/home/duality/Documents/projects/py-ledart/Ledart/Tools/Timing.py",
+		"/home/duality/Documents/projects/py-ledart/Ledart/Patterns/Plasma.py",
+		"/mnt/home/duality/Documents/Tentoo/comma-uuren.txt",
+		"/home/duality/Documents/projects/py-ledart/Ledart/Patterns/GraphicsTests.py",
+		"/run/media/duality/c8b3a12f-4234-40cd-99a1-2d51072ba965/home/duality/Documents/Tentoo/comma-uuren.txt",
+		"/home/duality/Documents/projects/py-ledart/Ledart/Patterns/Life/life.py",
+		"/run/media/duality/c8b3a12f-4234-40cd-99a1-2d51072ba965/home/duality/Documents/Tentoo/CommaIndustries/arm-board/ControlOne/sw/fs/trunk/src/tslib-1.1/plugins/touchthres.c",
+		"/home/duality/Documents/projects/py-ledart/Ledart/Tools/Graphics/Surface.py",
+		"/home/duality/Documents/projects/py-ledart/Ledart/Tools/Graphics/Graphics.py",
+		"/home/duality/Documents/projects/py-ledart/Ledart/requirements.txt",
+		"/home/duality/Documents/projects/py-ledart/Ledart/ArgumentParser.py",
+		"/home/duality/Documents/projects/py-ledart/Ledart/Patterns/Demo.py",
+		"/home/duality/Documents/projects/Lockomatic/server.py",
+		"/home/duality/Documents/projects/py-ledart/Ledart/Patterns/PixelLife.py",
+		"/home/duality/Documents/projects/py-ledart/Ledart/Demo.py",
+		"/home/duality/Documents/projects/py-ledart/Ledart/Patterns/CellurarAutomata.py",
+		"/home/duality/Documents/projects/py-ledart/Ledart/Tools/Vector.py",
+		"/home/duality/Documents/projects/py-ledart/Ledart/Patterns/PerlinTest.py",
+		"/home/duality/Documents/projects/py-ledart/Ledart/Tools/__init__.py",
+		"/home/duality/Documents/projects/py-ledart/Ledart/Tools/Noise.py",
+		"/home/duality/Documents/projects/py-ledart/Ledart/Patterns/RandomWalker.py",
+		"/home/duality/Documents/projects/py-ledart/Ledart/MatrixSim/Interfaces/Interface.py",
+		"/home/duality/Documents/projects/py-ledart/Ledart/MatrixSim/DetachedSim.py",
+		"/home/duality/Documents/projects/py-ledart/Ledart/Patterns/Patterns.py",
+		"/home/duality/Documents/projects/py-ledart/Ledart/Patterns/Mandelbrot.py",
+		"/home/duality/Documents/projects/py-ledart/Ledart/MatrixSim/Interfaces/OpenGlInterface.py",
+		"/home/duality/Documents/projects/py-ledart/Ledart/Tools/Graphics/Colors.py",
+		"/home/duality/Documents/Tentoo/uuren.txt",
+		"/home/duality/Documents/Tentoo/CommaIndustries/voip/doubango/h264_patch",
+		"/home/duality/Documents/code/wxpython-cffi/README.rst",
+		"/home/duality/.packages/arduino-1.6.12/hardware/arduino/avr/boards.txt",
+		"/home/duality/Documents/projects/py-ledart/setup.py",
+		"/home/duality/Documents/projects/py-ledart/profile.sh",
+		"/home/duality/Documents/projects/py-ledart/README.md",
+		"/home/duality/Documents/projects/py-ledart/setup.cfg",
+		"/home/duality/Documents/projects/py-ledart/Ledart/Patterns/Pong/Pong.py",
+		"/home/duality/Documents/projects/py-ledart/Ledart/Tools/Controllers/PygameController.py",
+		"/home/duality/Documents/projects/py-ledart/Ledart/Tools/Controllers/Controllers.py",
+		"/home/duality/Documents/projects/py-ledart/Ledart/configs/pixelmatrix_conf.py",
+		"/home/duality/Documents/projects/py-ledart/Ledart/Patterns/DisplayImage.py",
+		"/home/duality/Documents/projects/py-ledart/Ledart/Tools/Graphics/Imaged.py",
+		"/home/duality/Documents/Tentoo/CommaIndustries/uuren.txt",
+		"/home/duality/Documents/Tentoo/CommaIndustries/ControlOne/sw/fs/trunk/src/buildroot-2015.02/output/build/host-mtd-1.5.1/mkfs.ubifs/hashtable/hashtable_itr.h",
+		"/home/duality/Documents/Tentoo/CommaIndustries/ControlOne/sw/fs/trunk/src/buildroot-2015.02/output/build/host-mtd-1.5.1/mkfs.ubifs/hashtable/hashtable_itr.c",
+		"/home/duality/Documents/Tentoo/CommaIndustries/ControlOne/sw/fs/trunk/src/buildroot-2015.02/Makefile",
+		"/home/duality/Downloads/ncurses-5.9/configure",
+		"/home/duality/Documents/Tentoo/CommaIndustries/ControlOne/sw/fs/trunk/src/buildroot-2015.02/.config",
+		"/home/duality/Downloads/ncurses-5.9/Makefile.in",
+		"/home/duality/Documents/Tentoo/CommaIndustries/ControlOne/sw/kernel/trunk/src/linux-2.6.38/kernel/timeconst.pl",
+		"/home/duality/Documents/Tentoo/CommaIndustries/ControlOne/sw/make.sh",
+		"/home/duality/Documents/Tentoo/CommaIndustries/ControlOne/sw/fs/trunk/src/buildroot-2015.02/output/build/host-ncurses-5.9/Makefile",
+		"/home/duality/Downloads/ncurses-5.9-20141206-patch.sh",
+		"/home/duality/Documents/Tentoo/CommaIndustries/ControlOne/sw/fs/trunk/src/buildroot-2015.02/output/build/host-ncurses-5.9/ncurses/base/MKlib_gen.sh",
+		"/home/duality/Documents/Tentoo/CommaIndustries/ControlOne/sw/kernel/trunk/src/linux-2.6.38/kernel/timeconst.h",
+		"/home/duality/Documents/Tentoo/CommaIndustries/ControlOne/sw/kernel/trunk/src/linux-2.6.38/.config",
+		"/home/duality/pypy_pyaudio_error.txt",
+		"/home/duality/Documents/Tentoo/CommaIndustries/ControlOne/sw/fs/trunk/src/makeubicontrolone.sh",
+		"/home/duality/Documents/error-flash.txt",
+		"/home/duality/Documents/error",
+		"/home/duality/Documents/flash.txt",
+		"/home/duality/Documents/projects/py-ledart/Ledart/Patterns/Sim.py",
+		"/home/duality/Documents/Tentoo/CommaIndustries/ControlOne/sw/fs/trunk/src/makeubi.sh",
+		"/home/duality/Documents/Tentoo/CommaIndustries/ControlOne/sw/kernel/trunk/src/linux-2.6.28.8/.config",
+		"/home/duality/Documents/Tentoo/CommaIndustries/klad.txt",
+		"/home/duality/Documents/Tentoo/CommaIndustries/ControlOne/sw/kernel/trunk/src/linux-2.6.28.8/drivers/mtd/nand/nand_base.c",
+		"/home/duality/Documents/Tentoo/CommaIndustries/ControlOne/sw/kernel/trunk/src/linux-2.6.38/drivers/mtd/nand/s3c_nand.c",
+		"/home/duality/Documents/Tentoo/CommaIndustries/ControlOne/sw/kernel/trunk/src/linux-2.6.38/arch/arm/plat-samsung/dev-ts.c",
+		"/home/duality/Documents/Tentoo/CommaIndustries/ControlOne/sw/kernel/trunk/src/linux-2.6.38/arch/arm/plat-samsung/include/plat/devs.h",
+		"/home/duality/Documents/Tentoo/CommaIndustries/ControlOne/sw/kernel/trunk/src/linux-2.6.38/drivers/char/mini6410_buttons.c",
+		"/home/duality/Documents/Tentoo/CommaIndustries/ControlOne/sw/kernel/trunk/src/linux-2.6.38/drivers/input/touchscreen/mini6410-ts.c",
+		"/home/duality/Documents/Tentoo/CommaIndustries/ControlOne/sw/kernel/trunk/src/linux-2.6.38/drivers/char/mini6410_buttons.c:76",
+		"/drivers/mtd/nand/nand_base.c",
+		"/home/duality/ControlOne/sw/kernel/trunk/src/linux-2.6.38/config_mini6410_n43",
+		"/home/duality/ControlOne/sw/kernel/trunk/src/linux-2.6.38/arch/arm/mach-s3c64xx/s3c6410.c",
+		"/home/duality/ControlOne/sw/kernel/trunk/src/linux-2.6.38/arch/arm/mach-s3c64xx/mach-real6410.c",
+		"/home/duality/Documents/Tentoo/CommaIndustries/ControlOne/sw/kernel/trunk/src/linux-2.6.28.8/arch/arm/plat-s3c/include/plat/partition.h",
+		"/home/duality/Documents/Tentoo/CommaIndustries/ControlOne/sw/kernel/trunk/src/linux-2.6.28.8/fs/ubifs/super.c",
+		"/home/duality/Documents/Tentoo/CommaIndustries/ControlOne/sw/fs/trunk/src/patch.sh",
+		"/home/duality/Documents/Tentoo/CommaIndustries/ControlOne/sw/kernel/trunk/src/linux-2.6.28.8/config_TQ6410_A70",
+		"/home/duality/Documents/Tentoo/CommaIndustries/ControlOne/sw/kernel/trunk/src/linux-2.6.28.8/config_TQ6410_Q43",
+		"/home/duality/Documents/Tentoo/CommaIndustries/ControlOne/sw/kernel/trunk/src/linux-2.6.28.8/drivers/mtd/ubi/io.c",
+		"/home/duality/Documents/projects/py-ledart/.gitignore",
+		"/home/duality/Documents/projects/py-ledart/Ledart/Tools/Controllers/__init__.py"
+	],
+	"find":
+	{
+		"height": 35.0
+	},
+	"find_in_files":
+	{
+		"height": 93.0,
+		"where_history":
+		[
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": true,
+		"find_history":
+		[
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"selected": 0,
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"file": "pulseScope.py",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 7843,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Python/Python.sublime-syntax",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				}
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 35.0
+	},
+	"input":
+	{
+		"height": 35.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"pinned_build_system": "Packages/User/scons.sublime-build",
+	"project": "pulseScope.sublime-project",
+	"replace":
+	{
+		"height": 64.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 501.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"",
+				"~/Documents/projects/py-ledart/pyledart.sublime-workspace"
+			]
+		],
+		"width": 381.0
+	},
+	"select_symbol":
+	{
+		"height": 393.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 393.0
+	},
+	"selected_group": 0,
+	"settings":
+	{
+	},
+	"show_minimap": true,
+	"show_open_files": false,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 257.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}

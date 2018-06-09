@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 import struct
 import math
 import time
@@ -13,13 +14,13 @@ def chunks(l, n):
 
 """ point volume calculators. like averaging and just taking the first point """
 def pointVolumeAvg(chunk):
-    return sum(chunk) / len(chunk)
+    return float(sum(chunk)) / float(len(chunk))
 
 def pointVolumeFirst(chunk):
     return chunk[0]
 
 def mean(a):
-    return sum(a) / len(a)
+    return float(sum(a)) / float(len(a))
 
 def average_lists(lists):
     return map(mean, zip(*lists))
@@ -33,10 +34,9 @@ class Scope(object):
         self.pointcalc = pointcalc
 
         # attributes for waveform.
-        self.wave_data = []
 
         # atributes applied for spectrum
-        self.freq_scale = 3
+        self.freq_scale = 4
         self.spectra_smooth = 3
         self.spectra = []
         self.window = None
@@ -92,14 +92,14 @@ class Scope(object):
         lpoints = []
         for x, chunk in enumerate(chunks(lchannel_data, round(len(lchannel_data) / width))):
             value = self.pointcalc(chunk)
-            y = height * 0.20 - int((value / (2**31)) * (height / 2))
+            y = int(height * 0.20 - (value / (2 ** 31) * (height / 2.0)))
             point = (x, y)
             lpoints.append(point)
 
         rpoints = []
         for x, chunk in enumerate(chunks(rchannel_data, round(len(rchannel_data) / width))):
             value = self.pointcalc(chunk)
-            y = height * 0.50 - int((value / (2**31)) * (height / 2))
+            y = int(height * 0.50 - (value / (2 ** 31) * (height / 2.0)))
             point = (x, y)
             rpoints.append(point)
 
@@ -195,7 +195,7 @@ if __name__ == "__main__":
                 if scope != None:
                     scope.process()
                     scope.draw(self.data, self.rate)
-                time.sleep(1. / 30)
+                time.sleep(1. / 25.)
     with AudioProg() as ta:
         ta.process()
 
