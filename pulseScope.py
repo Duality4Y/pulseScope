@@ -83,7 +83,7 @@ class Scope(object):
         # attributes for waveform.
 
         # atributes applied for spectrum
-        self.freq_scale = (1 << 8)
+        self.freq_scale = (1 << 9)
         self.fft_stretch = 2
 
         self.leftcolor = (0, 0xff, 0xff)
@@ -235,6 +235,13 @@ class Scope(object):
         points = lpoints, rpoints
         return points
 
+    def drawXY(self, data, scale=7):
+        width, height = self.getWindowSize
+        lcvalues, rcvalues = channels(data)
+        lcvalues = list(map(lambda x: (width / 2) + (x / ((1 << 32) - 1) * width * scale), lcvalues))
+        rcvalues = list(map(lambda y: (height / 2) + (y / ((1 << 32) - 1) * height * scale), rcvalues))
+        return list(zip(lcvalues, rcvalues))
+
     def draw(self, data, samplerate):
         if data == None:
             return
@@ -267,9 +274,14 @@ class Scope(object):
         if rightshape:
             pygame.draw.lines(self.surface, self.rightcolor, False, rightshape, 1)
 
+
         # draw the windowing function.
         if self.window is not None:
             pygame.draw.lines(self.surface, (0xff, 0, 0), False, self.windowpoints, 1)
+
+        shape = self.drawXY(data)
+        if shape is not None:
+            pygame.draw.aalines(self.surface, (0, 0xff, 0), False, shape, 1)
 
         pygame.display.update()
 
@@ -334,5 +346,6 @@ if __name__ == "__main__":
                 if scope != None:
                     scope.process()
                     scope.draw(self.data, self.rate)
+                    # time.sleep(1. / 60.)
     with AudioProg() as ta:
         ta.process()
