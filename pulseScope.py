@@ -6,6 +6,7 @@ import time
 import pyaudio
 import pygame
 import numpy
+from operator import itemgetter
 
 def chunks(l, n):
     """ Yield successive n-sized chunks from l."""
@@ -25,81 +26,209 @@ def mean(a):
 def average_lists(lists):
     return map(mean, zip(*lists))
 
-class Scope(object):
-    def __init__(self, size=(), pointcalc=pointVolumeFirst):
-        pygame.init()
-        self.screen_size = 1024, 800
-        self.surface = pygame.display.set_mode(self.screen_size)
-        pygame.display.set_caption("pulseScope")
-        self.pointcalc = pointcalc
+# if data is interlaced audio then return a tuple with left and right data
+def channels(data):
+    return (data[0::2], data[1::2])
 
+from math import log2, pow
+
+A4 = 440
+C0 = A4 * pow(2, -4.75)
+keyname = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"]
+
+def pitch(freq):
+    if freq:
+        h = round(12 * log2(freq / C0))
+        octave = h // 12
+        n = h % 12
+        return keyname[n] + str(octave)
+    else:
+        return ""
+
+
+# object for doing averages on lists of numbers.
+class Average(object):
+    def __init__(self, size=20):
+        self.size = size
+        self.lists = []
+
+    def averageLists(self, lists):
+        return list(map(mean, zip(*lists)))
+
+    def getSize(self):
+        return self.size
+
+    def setSize(self, value):
+        self.size = value
+
+    def average(self, values):
+        self.lists.append(values)
+        if len(self.lists) > self.size:
+            del self.lists[0]
+        return self.averageLists(self.lists)
+
+
+class Scope(object):
+    def __init__(self, rect=(0, 0, 1024, 1024), pointcalc=pointVolumeFirst):
+        pygame.init()
+        pygame.font.init()
+
+        self.rect = rect
+        self.surface = pygame.display.set_mode(self.getWindowSize)
+        pygame.display.set_caption("pulseScope")
+        
+        self.font = pygame.font.SysFont('Times New Roman', 28)
+
+        self.pointcalc = pointcalc
         # attributes for waveform.
 
         # atributes applied for spectrum
-        self.freq_scale = 4
-        self.spectra_smooth = 3
-        self.spectra = []
+        self.freq_scale = (1 << 8)
+        self.fft_stretch = 2
+
+        self.leftcolor = (0, 0xff, 0xff)
+        self.rightcolor = (0xff, 0, 0xff)
+
+
+        self.average = 6
+        self.avgLeft = Average(size=self.average)
+        self.avgRight = Average(size=self.average)
+
+        width, height = self.getWindowSize
         self.window = None
-        # self.window = numpy.hanning(self.screen_size[0])
-        # self.window = numpy.bartlett(self.screen_size[0])
-        # self.window = numpy.blackman(self.screen_size[0])
-        # self.window = numpy.hamming(self.screen_size[0])
-        # self.window = numpy.kaiser(self.screen_size[0], 2.5)
+        # self.window = numpy.hanning(width)
+        # self.window = numpy.bartlett(width)
+        # self.window = numpy.blackman(width)
+        # self.window = numpy.hamming(width)
+        self.window = numpy.kaiser(width * 2, 5.0)
 
+        self.windowpoints = []
+        if self.window is not None:
+            for x, value in enumerate(self.window):
+                point = (x, int(height - (value * height)))
+                self.windowpoints.append(point)
 
-    def drawSpectrum(self, data, samplerate):
-        spectrum = numpy.fft.fft(data, n=5*len(data))
+    @property
+    def getWindowSize(self):
+        return self.rect[2:4:1]
+
+    # prints text on the screen on line
+    # line is in increments of font height.
+    def printText(self, text, line, color):
+        self.textsurface = self.font.render(text, True, color)
+        x, y, width, height = self.textsurface.get_rect()
+        self.surface.blit(self.textsurface, (0, line * height))
+
+    # build a specturm (list of values) from data.
+    # (fft spectrum)
+    def buildSpectrum(self, data):
+        # n is simpy how many points are returned. if bigger its padded with zero's
+        # if smaller then len(data) it is cropped.
+        spectrum = numpy.fft.fft(data, n=self.fft_stretch * len(data))
         real_spectrum = numpy.absolute(spectrum)
-        width, height = self.screen_size
+        width, height = self.getWindowSize
 
-        self.spectra.append(real_spectrum)
-        if len(self.spectra) > self.spectra_smooth:
-            del self.spectra[0]
+        return real_spectrum
 
-        avg_spectra = average_lists(self.spectra)
+    def calcSpectrumHeight(self, x, size, value):
+        width, height = size
+        y = 0
+
+        if math.isnan(value):
+            value = 0
+        if self.window is not None:
+            y = height - int(value / ((1 << 32) - 1) * self.freq_scale * self.window[x]) - 1
+        else:
+            y = height - int(value / ((1 << 32) - 1) * self.freq_scale) - 1
+        return (x, y)
+
+    def drawSpectrum(self, data):
+        points = []
+        width, height = self.getWindowSize
+        for x, value in enumerate(data):
+            if x >= width:
+                break
+            point = self.calcSpectrumHeight(x, self.getWindowSize, value)
+            points.append(point)
+
+        return points
+
+    # returns a point list that can be used, to for example draw.
+    def drawSingleSpectrum(self, data, samplerate):
+        spectrum = numpy.fft.fft(data, n=self.fft_stretch*len(data))
+        real_spectrum = numpy.absolute(spectrum)
+        width, height = self.getWindowSize
 
         points = []
+        # enumerate x with the len of avg spectra is not so nice.
+        # this way we are stuck to a single length/size/width
         for x, value in enumerate(avg_spectra):
             if x >= width:
                 break
             if math.isnan(value):
                 value = 0
             if self.window is not None:
-                y = height - int(value / (2**31) * self.freq_scale * self.window[x]) - 1
+                y = height - int(value / ((1 << 32) - 1) * self.freq_scale * self.window[x]) - 1
             else:
-                y = height - int(value / (2**31) * self.freq_scale) - 1
+                y = height - int(value / ((1 << 32) - 1) * self.freq_scale) - 1
             point = (x, y)
             points.append(point)
+        return points
+
+    def calcFreq(self, spectrum, samplerate):
+        freqs = numpy.fft.fftfreq(len(spectrum))
+        idx = numpy.argmax(numpy.abs(spectrum))
+        freq = freqs[idx]
+        return abs(freq * samplerate)
+
+    def drawSpectra(self, data, samplerate):
+        width, height = self.getWindowSize
+        leftData, rightData = channels(data)
+        
+        # process the left side and draw.
+        leftSpectrum = self.buildSpectrum(leftData)
+        leftSpectrum = self.avgLeft.average(leftSpectrum)
+        freq = self.calcFreq(leftSpectrum, samplerate)
+        self.printText("L Freq: %dHz %s" % (freq, pitch(freq)), 0, self.leftcolor)
+        leftPoints = self.drawSpectrum(leftSpectrum)
+
+        # process the right side and draw it.
+        rightSpectrum = self.buildSpectrum(rightData)
+        rightSpectrum = self.avgRight.average(rightSpectrum)
+        freq = self.calcFreq(rightSpectrum, samplerate)
+        self.printText("R Freq: %dHz %s" % (freq, pitch(freq)), 1, self.rightcolor)
+        rightPoints = self.drawSpectrum(rightSpectrum)
 
 
-        # prototype of function that might be applied to the spectrum?
-        # line = []
-        # for x in range(0, int(len(data) / 2)):
-        #     if x >= width:
-        #         break
-        #     y = height - 200 * (1 - (1.012 ** (-x)))
-        #     point = (x, y)
-        #     line.append(point)
+        # get the value that is in the view that is the max value and return a index + a 
+        # step, value = max(enumerate(leftSpectrum), key=itemgetter(1))
+        # if step < width:
+        #     pass
 
-        return points, None
+        # freqs = numpy.fft.fftfreq(len(rightSpectrum))
+        # idx = numpy.argmax(numpy.abs(rightSpectrum), axis=0)
+        # freq = freqs[idx]
+        # freqhz = abs(freq * samplerate)
+
+        return leftPoints, rightPoints
 
     def drawWaveForm(self, data, samplerate):
         lchannel_data = list(data[0::2])
         rchannel_data = list(data[1::2])
         # turn data into a list of points
-        width,  height = self.screen_size
+        width,  height = self.getWindowSize
 
         lpoints = []
         for x, chunk in enumerate(chunks(lchannel_data, round(len(lchannel_data) / width))):
             value = self.pointcalc(chunk)
-            y = int(height * 0.20 - (value / (2 ** 31) * (height / 2.0)))
+            y = int(height * 0.20 - (value / ((1 << 32) - 1) * (height / 2.0)))
             point = (x, y)
             lpoints.append(point)
 
         rpoints = []
         for x, chunk in enumerate(chunks(rchannel_data, round(len(rchannel_data) / width))):
             value = self.pointcalc(chunk)
-            y = int(height * 0.50 - (value / (2 ** 31) * (height / 2.0)))
+            y = int(height * 0.50 - (value / ((1 << 32) - 1) * (height / 2.0)))
             point = (x, y)
             rpoints.append(point)
 
@@ -114,7 +243,7 @@ class Scope(object):
         self.surface.fill((0, 0, 0))
 
         # draw a grid but don't draw the first lines
-        width, height = self.screen_size
+        width, height = self.getWindowSize
         for x in range(32, width, 32):
             pygame.draw.line(self.surface, (0x40, 0x40, 0x00), (x, 0), (x, height), 1)
         for y in range(32, height, 32):
@@ -126,11 +255,21 @@ class Scope(object):
             if shape:
                 pygame.draw.lines(self.surface, (0, 0xff, 0), False, shape, 1)
 
-        # draw a spectrum
-        shapes = self.drawSpectrum(data, samplerate)
-        for shape in shapes:
-            if shape:
-                pygame.draw.lines(self.surface, (0, 0xff, 0xFF), False, shape, 1)
+        leftshape, rightshape = self.drawWaveForm(data, samplerate)
+        if leftshape:
+            pygame.draw.lines(self.surface, self.leftcolor, False, leftshape, 1)
+        if rightshape:
+            pygame.draw.lines(self.surface, self.rightcolor, False, rightshape, 1)
+
+        leftshape, rightshape = self.drawSpectra(data, samplerate)
+        if leftshape:
+            pygame.draw.lines(self.surface, self.leftcolor, False, leftshape, 1)
+        if rightshape:
+            pygame.draw.lines(self.surface, self.rightcolor, False, rightshape, 1)
+
+        # draw the windowing function.
+        if self.window is not None:
+            pygame.draw.lines(self.surface, (0xff, 0, 0), False, self.windowpoints, 1)
 
         pygame.display.update()
 
@@ -155,7 +294,7 @@ if __name__ == "__main__":
     class AudioProg(object):
         def __init__(self):
             self.audioChannels = 2
-            self.rate = 44100
+            self.rate = 44800
             self.chunksize = 1024
 
             self.p = pyaudio.PyAudio()
@@ -175,10 +314,15 @@ if __name__ == "__main__":
             return self
 
         def __exit__(self, *args, **kwargs):
-            print("clearing things up!")
+            print("cleaning things up!")
+            print("stopping stream")
             self.stream.stop_stream()
+            print("closing stream.")
             self.stream.close()
+            print("terminating pyaudio.")
             self.p.terminate()
+            print("done cleaning up.")
+            return False
 
         def audioCallback(self, in_data, frame_count, time_info, status):
             self.data = struct.unpack("%si" % int(len(in_data) / 4), in_data)
@@ -187,49 +331,8 @@ if __name__ == "__main__":
 
         def process(self):
             while self.stream.is_active():
-                # if self.new_data and self.data != None:
-                #     if scope != None:
-                #         scope.process()
-                #         scope.draw(self.data, self.rate)
-                #     self.new_data = False
                 if scope != None:
                     scope.process()
                     scope.draw(self.data, self.rate)
-                time.sleep(1. / 25.)
     with AudioProg() as ta:
         ta.process()
-
-"""
-WIDTH = 2
-CHANNELS = 2
-RATE = 44100
-
-p = pyaudio.PyAudio()
-
-def callback(in_data, frame_count, time_info, status):
-    print(in_data)
-    print(frame_count)
-    print(time_info)
-    print(status)
-
-    return (in_data, pyaudio.paContinue)
-
-stream = p.open(format=p.get_format_from_width(WIDTH),
-                channels=CHANNELS,
-                rate=RATE,
-                input=True,
-                output=True,
-                stream_callback=callback)
-
-stream.start_stream()
-
-try:
-    while stream.is_active():
-        pass
-        # time.sleep(0.1)
-except Exception as e:
-    stream.stop_stream()
-    stream.close()
-
-    p.terminate()
-"""

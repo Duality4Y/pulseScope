@@ -1,0 +1,13 @@
+{
+	"folders":
+	[
+		{
+			"path": "."
+		},
+		{
+			"path": "/usr/lib/python3.6",
+			"file_include_patterns": "*.py",
+			"follow_symlinks": true
+		}
+	]
+}
