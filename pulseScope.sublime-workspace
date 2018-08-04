@@ -15,37 +15,9 @@
 			"file": "pulseScope.py",
 			"settings":
 			{
-				"buffer_size": 11547,
+				"buffer_size": 13213,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "/usr/lib/python3.6/site-packages/numpy/fft/fftpack.py",
-			"settings":
-			{
-				"buffer_size": 46059,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "pulseScope.sublime-project",
-			"settings":
-			{
-				"buffer_size": 150,
-				"encoding": "UTF-8",
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"contents": "Package Control Messages\n========================\n\nPython Improved\n---------------\n\n  Python Improved\n  ===============\n  \n  Thank you for installing Python Improved, the best Python language definition\n  for Sublime Text! To make this your default Python, open a `.py` Python file.\n  Select `View -> Syntax -> Open all with current extension as... -> PythonImproved`\n  and you should be all set.\n  \n  To take full advantage of the extra scopes included in Python Improved, check\n  out the Neon Color Scheme at https://sublime.wbond.net/packages/Neon%20Color%20Scheme\n  If you'd rather modify your own color scheme, a list of scopes is included in\n  the README.md in the `Packages/Python Improved` directory. You can also find\n  them on GitHub at https://github.com/MattDMo/PythonImproved\n  \n  If you have any questions, comments, concerns, bugs, or patches, please open an\n  issue or pull request on GitHub and I'll do what I can to help out. You can also\n  email me directly at <mattdmo@pigimal.com> or find me on Twitter @MattDMo. This\n  is definitely a work in progress, so if you'd like to contribute I'd love to\n  hear from you!\n",
-			"settings":
-			{
-				"buffer_size": 1135,
-				"line_ending": "Unix",
-				"name": "Package Control Messages",
-				"read_only": true,
-				"scratch": true
 			}
 		}
 	],
@@ -322,10 +294,6 @@
 	},
 	"expanded_folders":
 	[
-		"/usr/lib/python3.6",
-		"/usr/lib/python3.6/site-packages",
-		"/usr/lib/python3.6/site-packages/numpy",
-		"/usr/lib/python3.6/site-packages/numpy/fft"
 	],
 	"file_history":
 	[
@@ -474,6 +442,13 @@
 		"case_sensitive": true,
 		"find_history":
 		[
+			"print",
+			"(2 ** 31)",
+			"(2 ** 30)",
+			"10",
+			"4",
+			"A4",
+			")\n",
 			"average",
 			"getWindowSize",
 			"self.getWindowSize[0]",
@@ -515,15 +490,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 11547,
+						"buffer_size": 13213,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								10217,
-								10217
+								4989,
+								4989
 							]
 						],
 						"settings":
@@ -533,98 +508,10 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 6816.0,
+						"translation.y": 3797.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 0,
-					"type": "text"
-				},
-				{
-					"buffer": 1,
-					"file": "/usr/lib/python3.6/site-packages/numpy/fft/fftpack.py",
-					"semi_transient": true,
-					"settings":
-					{
-						"buffer_size": 46059,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								6122,
-								6122
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Python Improved/PythonImproved.tmLanguage",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 8892.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 1,
-					"type": "text"
-				},
-				{
-					"buffer": 2,
-					"file": "pulseScope.sublime-project",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 150,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								1,
-								1
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/JavaScript/JSON.sublime-syntax"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 2,
-					"type": "text"
-				},
-				{
-					"buffer": 3,
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 1135,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								1135,
-								1135
-							]
-						],
-						"settings":
-						{
-							"auto_indent": false,
-							"syntax": "Packages/Text/Plain text.tmLanguage",
-							"tab_width": 2,
-							"word_wrap": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 3,
 					"type": "text"
 				}
 			]

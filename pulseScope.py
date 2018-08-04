@@ -30,6 +30,9 @@ def average_lists(lists):
 def channels(data):
     return (data[0::2], data[1::2])
 
+def toLinear(data, logScale=20):
+    value = logScale * numpy.log10(value)
+
 from math import log2, pow
 
 A4 = 440
@@ -67,6 +70,16 @@ class Average(object):
             del self.lists[0]
         return self.averageLists(self.lists)
 
+class Buffer(object):
+    def __init__(self, size=10):
+        self.lists = []
+        self.size = size
+
+    def buffer(self, values):
+        self.lists.append(values)
+        if len(self.lists) > self.size:
+            del self.lists[0]
+
 
 class Scope(object):
     def __init__(self, rect=(0, 0, 1024, 1024), pointcalc=pointVolumeFirst):
@@ -83,16 +96,23 @@ class Scope(object):
         # attributes for waveform.
 
         # atributes applied for spectrum
-        self.freq_scale = (1 << 9)
+        self.freq_scale = 1
         self.fft_stretch = 2
 
         self.leftcolor = (0, 0xff, 0xff)
         self.rightcolor = (0xff, 0, 0xff)
 
 
-        self.average = 6
+        self.average = 1
         self.avgLeft = Average(size=self.average)
         self.avgRight = Average(size=self.average)
+
+        # self.bufferChannelLength = 1
+        # self.bufferLeft = Buffer(size=self.bufferChannelLength)
+        # self.bufferRight = Buffer(size=self.bufferChannelLength)
+
+        self.bufferedLine = Buffer(size=1)
+        self.maxDistance = 0
 
         width, height = self.getWindowSize
         self.window = None
@@ -100,7 +120,7 @@ class Scope(object):
         # self.window = numpy.bartlett(width)
         # self.window = numpy.blackman(width)
         # self.window = numpy.hamming(width)
-        self.window = numpy.kaiser(width * 2, 5.0)
+        # self.window = numpy.kaiser(width * 2, 5.0)
 
         self.windowpoints = []
         if self.window is not None:
@@ -130,17 +150,54 @@ class Scope(object):
 
         return real_spectrum
 
+    def logFun(self, value, a):
+        return value / (a + value)
+
     def calcSpectrumHeight(self, x, size, value):
         width, height = size
         y = 0
 
-        if math.isnan(value):
-            value = 0
-        if self.window is not None:
-            y = height - int(value / ((1 << 32) - 1) * self.freq_scale * self.window[x]) - 1
-        else:
-            y = height - int(value / ((1 << 32) - 1) * self.freq_scale) - 1
-        return (x, y)
+
+        # apply a non linear function to value.
+        # value = value / ((1 << 32) - 1)
+        value = self.logFun(value, ((1 << 32) - 1))
+        # then scale it nicely
+        y = (height - height * (value / 4))
+
+        # value = self.logScale * numpy.log10(value)
+        # if numpy.isnan(value) or numpy.isinf(value):
+        #     value = 0
+        # print(value)
+        # if self.window is not None:
+        #     y = int(value / ((1 << 32) - 1) * self.freq_scale * self.window[x]) - 1
+        # else:
+        #     y = int(value / ((1 << 32) - 1) * self.freq_scale) - 1
+        
+        # linearize function
+        # y = self.logScale * numpy.log10(y)
+        # if numpy.isnan(y) or numpy.isinf(y):
+        #     y = 0
+        # y = height - y - 10
+
+        # return (x, value)
+        # print(x, y)
+        return x, y
+
+    # def calcSpectrumHeight(self, x, size, value):
+    #     width, height = size
+    #     y = 0
+
+    #     if numpy.isnan(value) or numpy.isinf(value):
+    #         value = 0
+    #     if self.window is not None:
+    #         y = int(value / ((1 << 32) - 1) * self.freq_scale * self.window[x]) - 1
+    #     else:
+    #         y = int(value / ((1 << 32) - 1) * self.freq_scale) - 1
+        
+    #     y = height - y - 10
+
+    #     return (x, y)
+
 
     def drawSpectrum(self, data):
         points = []
@@ -165,7 +222,7 @@ class Scope(object):
         for x, value in enumerate(avg_spectra):
             if x >= width:
                 break
-            if math.isnan(value):
+            if numpy.isnan(value) or numpy.isinf(value):
                 value = 0
             if self.window is not None:
                 y = height - int(value / ((1 << 32) - 1) * self.freq_scale * self.window[x]) - 1
@@ -184,8 +241,11 @@ class Scope(object):
     def drawSpectra(self, data, samplerate):
         width, height = self.getWindowSize
         leftData, rightData = channels(data)
+        # self.bufferLeft.buffer(leftData)
+        # self.bufferRight.buffer(rightData)
         
         # process the left side and draw.
+        # leftData = [item for sublist in self.bufferLeft.lists for item in sublist]
         leftSpectrum = self.buildSpectrum(leftData)
         leftSpectrum = self.avgLeft.average(leftSpectrum)
         freq = self.calcFreq(leftSpectrum, samplerate)
@@ -193,6 +253,7 @@ class Scope(object):
         leftPoints = self.drawSpectrum(leftSpectrum)
 
         # process the right side and draw it.
+        # rightData = [item for sublist in self.bufferRight.lists for item in sublist]
         rightSpectrum = self.buildSpectrum(rightData)
         rightSpectrum = self.avgRight.average(rightSpectrum)
         freq = self.calcFreq(rightSpectrum, samplerate)
@@ -221,6 +282,8 @@ class Scope(object):
         lpoints = []
         for x, chunk in enumerate(chunks(lchannel_data, round(len(lchannel_data) / width))):
             value = self.pointcalc(chunk)
+            if numpy.isnan(value) or numpy.isinf(value):
+                value = 0
             y = int(height * 0.20 - (value / ((1 << 32) - 1) * (height / 2.0)))
             point = (x, y)
             lpoints.append(point)
@@ -235,18 +298,19 @@ class Scope(object):
         points = lpoints, rpoints
         return points
 
-    def drawXY(self, data, scale=7):
+    def drawXY(self, data, scale=5):
         width, height = self.getWindowSize
         lcvalues, rcvalues = channels(data)
+
         lcvalues = list(map(lambda x: (width / 2) + (x / ((1 << 32) - 1) * width * scale), lcvalues))
-        rcvalues = list(map(lambda y: (height / 2) + (y / ((1 << 32) - 1) * height * scale), rcvalues))
+        rcvalues = list(map(lambda y: height - ((height / 2) + (y / ((1 << 32) - 1) * height * scale)), rcvalues))
+
         return list(zip(lcvalues, rcvalues))
 
     def draw(self, data, samplerate):
         if data == None:
             return
 
-        # clear screen
         self.surface.fill((0, 0, 0))
 
         # draw a grid but don't draw the first lines
@@ -256,18 +320,15 @@ class Scope(object):
         for y in range(32, height, 32):
             pygame.draw.line(self.surface, (0x40, 0x40, 0x00), (0, y), (width, y), 1)
 
-        # draw a audio waveform time is at samplerate / len(data)
-        shapes = self.drawWaveForm(data, samplerate)
-        for shape in shapes:
-            if shape:
-                pygame.draw.lines(self.surface, (0, 0xff, 0), False, shape, 1)
-
+        # draw a representation of the wave form shape.
+        # time is samplerate / 1024
         leftshape, rightshape = self.drawWaveForm(data, samplerate)
         if leftshape:
             pygame.draw.lines(self.surface, self.leftcolor, False, leftshape, 1)
         if rightshape:
             pygame.draw.lines(self.surface, self.rightcolor, False, rightshape, 1)
 
+        # draw freq spectra
         leftshape, rightshape = self.drawSpectra(data, samplerate)
         if leftshape:
             pygame.draw.lines(self.surface, self.leftcolor, False, leftshape, 1)
@@ -279,9 +340,19 @@ class Scope(object):
         if self.window is not None:
             pygame.draw.lines(self.surface, (0xff, 0, 0), False, self.windowpoints, 1)
 
-        shape = self.drawXY(data)
-        if shape is not None:
-            pygame.draw.aalines(self.surface, (0, 0xff, 0), False, shape, 1)
+        
+
+
+        # shape = self.drawXY(data)
+        # self.bufferedLine.buffer(shape)
+        # shape = [item for sublist in self.bufferedLine.lists for item in sublist]
+        # if shape is not None:
+        #     # pygame.draw.aalines(self.surface, (0, 0xff, 0), False, shape, 1)
+        #     for p1, p2 in zip(shape[0:-1], shape[1::]):
+        #     #     dx = p1[0] - p2[0]
+        #     #     dy = p1[1] - p2[1]
+        #     #     distance = abs(((dx ** 2) + (dy ** 2)) ** 0.5)
+        #         pygame.draw.line(self.surface, (0, 0xff, 0), p1, p2, 1)
 
         pygame.display.update()
 
@@ -306,8 +377,8 @@ if __name__ == "__main__":
     class AudioProg(object):
         def __init__(self):
             self.audioChannels = 2
-            self.rate = 44800
-            self.chunksize = 1024
+            self.rate = 48000
+            self.chunksize = 1 << 10
 
             self.p = pyaudio.PyAudio()
             self.stream = self.p.open(format=pyaudio.paInt32,
@@ -346,6 +417,6 @@ if __name__ == "__main__":
                 if scope != None:
                     scope.process()
                     scope.draw(self.data, self.rate)
-                    # time.sleep(1. / 60.)
+                time.sleep(1. / 30.)
     with AudioProg() as ta:
         ta.process()
