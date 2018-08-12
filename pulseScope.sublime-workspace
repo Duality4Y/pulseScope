@@ -15,7 +15,7 @@
 			"file": "pulseScope.py",
 			"settings":
 			{
-				"buffer_size": 13213,
+				"buffer_size": 13752,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
@@ -443,6 +443,20 @@
 		"find_history":
 		[
 			"print",
+			"Buffer",
+			"30",
+			"AudioProg",
+			"len(inputData)",
+			"size",
+			"lists",
+			"bufferRight",
+			"bufferLeft",
+			"KeyboardInterrupt",
+			"getWindowSize",
+			"y",
+			"value",
+			"data",
+			"print",
 			"(2 ** 31)",
 			"(2 ** 30)",
 			"10",
@@ -490,15 +504,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 13213,
+						"buffer_size": 13752,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								4989,
-								4989
+								13752,
+								13752
 							]
 						],
 						"settings":
@@ -508,7 +522,7 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 3797.0,
+						"translation.y": 10052.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 0,

@@ -71,52 +71,81 @@ class Average(object):
         return self.averageLists(self.lists)
 
 class Buffer(object):
-    def __init__(self, size=10):
-        self.lists = []
-        self.size = size
+    def __init__(self, length=10, chunksize=1024):
+        self.data = []
+        self.length = length
+        self.chunksize = chunksize
+        self.dataslice = slice(self.chunksize, -1, 1)
 
-    def buffer(self, values):
-        self.lists.append(values)
-        if len(self.lists) > self.size:
-            del self.lists[0]
+    def add(self, inputData):
+        """
+            This function adds data to a buffered list of data.
+            Assumes that the inputData is a list of fixed length.
+        """
+        # remove the first one if the length is indicates it's full
+        if len(self.data) == self.chunksize * self.length:
+            self.data = self.data[self.chunksize::1]
+
+        self.data.extend(inputData)
+
+    @property
+    def size(self):
+        return len(self.data)
+
+    @property
+    def buffer(self):
+        return self.data
+
+    @property
+    def filled(self):
+        return self.size == (self.length * self.chunksize)
+
+class FramedBuffer(Buffer):
+    def __init__(self, *args, **kwargs):
+        super(FramedBuffer, self).__init__(*args, **kwargs)
+
+    @property
+    def buffer(self):
+        return self.data[math.floor(self.chunksize / 2):self.size - math.floor(self.chunksize / 2):1]
 
 
 class Scope(object):
-    def __init__(self, rect=(0, 0, 1024, 1024), pointcalc=pointVolumeFirst):
+    def __init__(self, samplerate, chunksize, rect=(0, 0, 1024, 1024), pointcalc=pointVolumeFirst):
         pygame.init()
         pygame.font.init()
 
         self.rect = rect
-        self.surface = pygame.display.set_mode(self.getWindowSize)
+        self.surface = pygame.display.set_mode(self.windowSize)
         pygame.display.set_caption("pulseScope")
+
+        self.chunksize = chunksize
+        self.samplerate = samplerate
         
         self.font = pygame.font.SysFont('Times New Roman', 28)
 
         self.pointcalc = pointcalc
-        # attributes for waveform.
+        self.xyEnabled = False
 
-        # atributes applied for spectrum
-        self.freq_scale = 1
+        # fft scale to window, so fftscale = 2 = max height half the window height (height / 2)
+        self.fftscale = 1024 / (13 * 32) # i want it to go to the 13'th bar.
         self.fft_stretch = 2
 
         self.leftcolor = (0, 0xff, 0xff)
         self.rightcolor = (0xff, 0, 0xff)
 
 
-        self.average = 1
+        self.average = 2
         self.avgLeft = Average(size=self.average)
         self.avgRight = Average(size=self.average)
 
-        # self.bufferChannelLength = 1
-        # self.bufferLeft = Buffer(size=self.bufferChannelLength)
-        # self.bufferRight = Buffer(size=self.bufferChannelLength)
+        self.leftBuffer = FramedBuffer(length=3, chunksize=self.chunksize)
+        self.rightBuffer = FramedBuffer(length=3, chunksize=self.chunksize)
 
-        self.bufferedLine = Buffer(size=1)
+        self.bufferedLine = Buffer(length=3, chunksize=self.chunksize)
         self.maxDistance = 0
 
-        width, height = self.getWindowSize
+        width, height = self.windowSize
         self.window = None
-        # self.window = numpy.hanning(width)
         # self.window = numpy.bartlett(width)
         # self.window = numpy.blackman(width)
         # self.window = numpy.hamming(width)
@@ -129,7 +158,7 @@ class Scope(object):
                 self.windowpoints.append(point)
 
     @property
-    def getWindowSize(self):
+    def windowSize(self):
         return self.rect[2:4:1]
 
     # prints text on the screen on line
@@ -144,92 +173,35 @@ class Scope(object):
     def buildSpectrum(self, data):
         # n is simpy how many points are returned. if bigger its padded with zero's
         # if smaller then len(data) it is cropped.
-        spectrum = numpy.fft.fft(data, n=self.fft_stretch * len(data))
+        width, height = self.windowSize
+        spectrum = numpy.fft.fft(data, n=self.fft_stretch * width)
         real_spectrum = numpy.absolute(spectrum)
-        width, height = self.getWindowSize
+        width, height = self.windowSize
 
         return real_spectrum
 
     def logFun(self, value, a):
         return value / (a + value)
 
-    def calcSpectrumHeight(self, x, size, value):
-        width, height = size
-        y = 0
-
-
+    def calcSpectrumHeight(self, x, value):
+        _ , height = self.windowSize
         # apply a non linear function to value.
-        # value = value / ((1 << 32) - 1)
         value = self.logFun(value, ((1 << 32) - 1))
         # then scale it nicely
-        y = (height - height * (value / 4))
+        y = (height - height * (value / self.fftscale))
 
-        # value = self.logScale * numpy.log10(value)
-        # if numpy.isnan(value) or numpy.isinf(value):
-        #     value = 0
-        # print(value)
-        # if self.window is not None:
-        #     y = int(value / ((1 << 32) - 1) * self.freq_scale * self.window[x]) - 1
-        # else:
-        #     y = int(value / ((1 << 32) - 1) * self.freq_scale) - 1
-        
-        # linearize function
-        # y = self.logScale * numpy.log10(y)
-        # if numpy.isnan(y) or numpy.isinf(y):
-        #     y = 0
-        # y = height - y - 10
-
-        # return (x, value)
-        # print(x, y)
         return x, y
-
-    # def calcSpectrumHeight(self, x, size, value):
-    #     width, height = size
-    #     y = 0
-
-    #     if numpy.isnan(value) or numpy.isinf(value):
-    #         value = 0
-    #     if self.window is not None:
-    #         y = int(value / ((1 << 32) - 1) * self.freq_scale * self.window[x]) - 1
-    #     else:
-    #         y = int(value / ((1 << 32) - 1) * self.freq_scale) - 1
-        
-    #     y = height - y - 10
-
-    #     return (x, y)
 
 
     def drawSpectrum(self, data):
         points = []
-        width, height = self.getWindowSize
+        width, height = self.windowSize
         for x, value in enumerate(data):
             if x >= width:
                 break
-            point = self.calcSpectrumHeight(x, self.getWindowSize, value)
+            point = self.calcSpectrumHeight(x, value)
             points.append(point)
 
-        return points
-
-    # returns a point list that can be used, to for example draw.
-    def drawSingleSpectrum(self, data, samplerate):
-        spectrum = numpy.fft.fft(data, n=self.fft_stretch*len(data))
-        real_spectrum = numpy.absolute(spectrum)
-        width, height = self.getWindowSize
-
-        points = []
-        # enumerate x with the len of avg spectra is not so nice.
-        # this way we are stuck to a single length/size/width
-        for x, value in enumerate(avg_spectra):
-            if x >= width:
-                break
-            if numpy.isnan(value) or numpy.isinf(value):
-                value = 0
-            if self.window is not None:
-                y = height - int(value / ((1 << 32) - 1) * self.freq_scale * self.window[x]) - 1
-            else:
-                y = height - int(value / ((1 << 32) - 1) * self.freq_scale) - 1
-            point = (x, y)
-            points.append(point)
         return points
 
     def calcFreq(self, spectrum, samplerate):
@@ -239,13 +211,32 @@ class Scope(object):
         return abs(freq * samplerate)
 
     def drawSpectra(self, data, samplerate):
-        width, height = self.getWindowSize
         leftData, rightData = channels(data)
-        # self.bufferLeft.buffer(leftData)
-        # self.bufferRight.buffer(rightData)
+        leftPoints, rightPoints = [], []
+
+        # buffer left data
+        self.leftBuffer.add(leftData)
+        if(self.leftBuffer.filled):
+            # sufficient data to do things with.
+            leftSpectrum = self.buildSpectrum(self.leftBuffer.data)
+            leftPoints = self.drawSpectrum(leftSpectrum)
+
+        self.rightBuffer.add(rightData)
+        if(self.rightBuffer.filled):
+            rightSpectrum = self.buildSpectrum(self.rightBuffer.data)
+            rightPoints = self.drawSpectrum(rightSpectrum)
+
+        return leftPoints, rightPoints
+
+
+    def _drawSpectra(self, data, samplerate):
+        width, height = self.windowSize
+        leftData, rightData = channels(data)
+        # self.leftBuffer.buffer(leftData)
+        # self.rightBuffer.buffer(rightData)
         
         # process the left side and draw.
-        # leftData = [item for sublist in self.bufferLeft.lists for item in sublist]
+        # leftData = [item for sublist in self.leftBuffer.lists for item in sublist]
         leftSpectrum = self.buildSpectrum(leftData)
         leftSpectrum = self.avgLeft.average(leftSpectrum)
         freq = self.calcFreq(leftSpectrum, samplerate)
@@ -253,7 +244,7 @@ class Scope(object):
         leftPoints = self.drawSpectrum(leftSpectrum)
 
         # process the right side and draw it.
-        # rightData = [item for sublist in self.bufferRight.lists for item in sublist]
+        # rightData = [item for sublist in self.rightBuffer.lists for item in sublist]
         rightSpectrum = self.buildSpectrum(rightData)
         rightSpectrum = self.avgRight.average(rightSpectrum)
         freq = self.calcFreq(rightSpectrum, samplerate)
@@ -277,7 +268,7 @@ class Scope(object):
         lchannel_data = list(data[0::2])
         rchannel_data = list(data[1::2])
         # turn data into a list of points
-        width,  height = self.getWindowSize
+        width,  height = self.windowSize
 
         lpoints = []
         for x, chunk in enumerate(chunks(lchannel_data, round(len(lchannel_data) / width))):
@@ -299,7 +290,7 @@ class Scope(object):
         return points
 
     def drawXY(self, data, scale=5):
-        width, height = self.getWindowSize
+        width, height = self.windowSize
         lcvalues, rcvalues = channels(data)
 
         lcvalues = list(map(lambda x: (width / 2) + (x / ((1 << 32) - 1) * width * scale), lcvalues))
@@ -314,7 +305,7 @@ class Scope(object):
         self.surface.fill((0, 0, 0))
 
         # draw a grid but don't draw the first lines
-        width, height = self.getWindowSize
+        width, height = self.windowSize
         for x in range(32, width, 32):
             pygame.draw.line(self.surface, (0x40, 0x40, 0x00), (x, 0), (x, height), 1)
         for y in range(32, height, 32):
@@ -342,43 +333,47 @@ class Scope(object):
 
         
 
-
-        # shape = self.drawXY(data)
-        # self.bufferedLine.buffer(shape)
-        # shape = [item for sublist in self.bufferedLine.lists for item in sublist]
-        # if shape is not None:
-        #     # pygame.draw.aalines(self.surface, (0, 0xff, 0), False, shape, 1)
-        #     for p1, p2 in zip(shape[0:-1], shape[1::]):
-        #     #     dx = p1[0] - p2[0]
-        #     #     dy = p1[1] - p2[1]
-        #     #     distance = abs(((dx ** 2) + (dy ** 2)) ** 0.5)
-        #         pygame.draw.line(self.surface, (0, 0xff, 0), p1, p2, 1)
+        if self.xyEnabled:
+            shape = self.drawXY(data)
+            self.bufferedLine.add(shape)
+            shape = self.bufferedLine.data
+            if shape is not None:
+                # pygame.draw.aalines(self.surface, (0, 0xff, 0), False, shape, 1)
+                for p1, p2 in zip(shape[0:-1], shape[1::]):
+                    pygame.draw.line(self.surface, (0, 0xff, 0), p1, p2, 1)
 
         pygame.display.update()
-
 
     def process(self):
         # handle for ctrl-c
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                raise KeyboardInterrupt
+                return True
             elif event.type == pygame.KEYDOWN:
                 mods = event.mod
                 key_mod = pygame.KMOD_LCTRL
                 lctrlpressed = (mods & key_mod) == key_mod
                 if event.key == pygame.K_c and lctrlpressed:
-                    raise KeyboardInterrupt
+                    return True
                 if event.key in (pygame.K_q, pygame.K_ESCAPE):
-                    raise KeyboardInterrupt
+                    return True
+        return False
+
+    def quit(self):
+        print("exiting scope.")
+        pygame.display.quit()
+        pygame.quit()
 
 if __name__ == "__main__":
-    scope = Scope()
+    samplerate = 44800
+    chunksize = (1 << 10)
+    scope = Scope(samplerate, chunksize)
 
-    class AudioProg(object):
+    class AudioApp(object):
         def __init__(self):
             self.audioChannels = 2
-            self.rate = 48000
-            self.chunksize = 1 << 10
+            self.rate = samplerate
+            self.chunksize = chunksize
 
             self.p = pyaudio.PyAudio()
             self.stream = self.p.open(format=pyaudio.paInt32,
@@ -393,10 +388,7 @@ if __name__ == "__main__":
             self.data = None
             self.new_data = False
 
-        def __enter__(self): 
-            return self
-
-        def __exit__(self, *args, **kwargs):
+        def quit(self):
             print("cleaning things up!")
             print("stopping stream")
             self.stream.stop_stream()
@@ -405,7 +397,6 @@ if __name__ == "__main__":
             print("terminating pyaudio.")
             self.p.terminate()
             print("done cleaning up.")
-            return False
 
         def audioCallback(self, in_data, frame_count, time_info, status):
             self.data = struct.unpack("%si" % int(len(in_data) / 4), in_data)
@@ -415,8 +406,12 @@ if __name__ == "__main__":
         def process(self):
             while self.stream.is_active():
                 if scope != None:
-                    scope.process()
+                    if scope.process():
+                        break # break loop to exit
                     scope.draw(self.data, self.rate)
                 time.sleep(1. / 30.)
-    with AudioProg() as ta:
-        ta.process()
+
+    ap = AudioApp()
+    ap.process()
+    ap.quit()
+    scope.quit()
