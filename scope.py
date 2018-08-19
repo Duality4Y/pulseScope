@@ -1,6 +1,7 @@
 import pygame
 import numpy
 
+import artnet
 import utils
 import audio
 
@@ -23,8 +24,8 @@ class Scope(object):
 
         # fft scale to window, so fftHeightScale = 2 = max height half the window height (height / 2)
         # self.fftHeightScale = 1024 / (13 * 32) # i want it to go to the 13'th bar.
-        self.fftHeightScale = 1
-        self.fftBinScale = 4
+        self.fftHeightScale = 2
+        self.fftBinScale = 6
 
         self.leftcolor = (0, 0xff, 0xff)
         self.rightcolor = (0xff, 0, 0xff)
@@ -35,8 +36,8 @@ class Scope(object):
         self.avgRight = utils.Average(size=self.fftAverage)
 
         fftFrameSize = 1
-        self.leftBuffer = utils.FramedBuffer(length=fftFrameSize, chunksize=self.chunksize)
-        self.rightBuffer = utils.FramedBuffer(length=fftFrameSize, chunksize=self.chunksize)
+        self.leftBuffer = utils.Buffer(length=fftFrameSize, chunksize=self.chunksize)
+        self.rightBuffer = utils.Buffer(length=fftFrameSize, chunksize=self.chunksize)
 
         self.bufferedLine = utils.Buffer(length=3, chunksize=self.chunksize)
         self.maxDistance = 0
@@ -56,7 +57,10 @@ class Scope(object):
                 self.windowpoints.append(point)
 
         self.waveFormScale = 1
-        self.numberFftBars = 6
+
+        self.artnet = artnet.Artnet()
+        self.candy = artnet.CandyMachine()
+        self.numberFftBars = self.candy.height
 
     @property
     def windowSize(self):
@@ -169,14 +173,15 @@ class Scope(object):
 
     def drawFftBlocks(self, points):
         shape = []
-
         width, height = self.windowSize
-
         barWidth = width // self.numberFftBars
         values = [height - value[1] for value in points]
-        for x, chunk in enumerate(utils.chunks(values, self.numberFftBars)):
-            barHeight = utils.chunkMean(chunk)
-            # barHeight = utils.chunkFirstPoint(chunk)
+        
+
+        self.candy.fill((0, 0, 0))
+        for x, chunk in enumerate(utils.chunks(values, barWidth)):
+            # barHeight = utils.chunkMean(chunk)
+            barHeight = utils.chunkFirstPoint(chunk)
             pos = (x * barWidth, 512 - barHeight)
             size = (barWidth, barHeight)
 
@@ -185,6 +190,9 @@ class Scope(object):
             bar.fill((0, 0xFF, 0))
             pygame.draw.rect(bar, (0, 0, 0), (0, 0, *size), 2)
             self.surface.blit(bar, pos)
+
+            self.candy.drawHLine(0, x, barHeight // 40, (0, 0xFF, 0))
+        self.artnet.transmit(bytes(self.candy))
         
         return shape
 

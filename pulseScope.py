@@ -2,6 +2,7 @@
 import struct
 import math
 import time
+import traceback
 
 import pyaudio
 import pygame
@@ -10,6 +11,7 @@ from operator import itemgetter
 
 import utils
 import audio
+import artnet
 from scope import Scope
 
 if __name__ == "__main__":
@@ -40,9 +42,12 @@ if __name__ == "__main__":
             return self
 
         def __exit__(self, *args):
-            print(">> args: " + str(args))
+            print(">> args: ", args)
+            etype, value, tb = args
+            traceback.print_exception(etype, value, tb)
             self.quit()
             scope.quit()
+            return False
 
         def quit(self):
             print(">> cleaning things up!")
