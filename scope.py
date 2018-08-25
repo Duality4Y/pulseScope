@@ -6,7 +6,7 @@ import utils
 import audio
 
 class Scope(object):
-    def __init__(self, samplerate, chunksize, rect=(0, 0, 1024, 1024), pointcalc=utils.chunkMean):
+    def __init__(self, samplerate, chunksize, rect=(0, 0, 1024, 1024), pointcalc=utils.chunkFirstPoint):
         pygame.init()
         pygame.font.init()
 
@@ -25,7 +25,7 @@ class Scope(object):
         # fft scale to window, so fftHeightScale = 2 = max height half the window height (height / 2)
         # self.fftHeightScale = 1024 / (13 * 32) # i want it to go to the 13'th bar.
         self.fftHeightScale = 2
-        self.fftBinScale = 6
+        self.fftBinScale = 8
 
         self.leftcolor = (0, 0xff, 0xff)
         self.rightcolor = (0xff, 0, 0xff)
@@ -47,7 +47,7 @@ class Scope(object):
         # self.window = numpy.bartlett(width)
         # self.window = numpy.blackman(width)
         self.window = numpy.hamming(width)
-        # self.window = numpy.kaiser(width * 2, 5.0)
+        self.window = numpy.kaiser(width * 2, 5.0)
         self.drawWindowShape = False
 
         self.windowpoints = []
@@ -55,12 +55,12 @@ class Scope(object):
             for x, value in enumerate(self.window):
                 point = (x, int(height - (value * height)))
                 self.windowpoints.append(point)
-
-        self.waveFormScale = 1
+        
+        self.waveFormScale = 3
+        self.numberFftBars = 6 * 2 + 20
 
         self.artnet = artnet.Artnet()
         self.candy = artnet.CandyMachine()
-        self.numberFftBars = self.candy.height
 
     @property
     def windowSize(self):
@@ -130,7 +130,9 @@ class Scope(object):
         self.leftBuffer.add(leftData)
         if(self.leftBuffer.filled):
             leftSpectrum = self.buildSpectrum(self.leftBuffer.data)
-            leftSpectrum = self.avgLeft.average(leftSpectrum)[0:width:1]
+            # slicing the data breaks pitch dection outside of the window.
+            # (full range of the fft bins. doesn't have to fall inside the window.)
+            leftSpectrum = self.avgLeft.average(leftSpectrum)
             leftPoints = self.drawSpectrum(leftSpectrum)
             freq = self.calcFreq(leftSpectrum, samplerate)
             self.printText("L Freq: {0:.2f}Hz {1}".format(freq, audio.pitch(freq)), 0, self.leftcolor)
@@ -138,7 +140,7 @@ class Scope(object):
         self.rightBuffer.add(rightData)
         if(self.rightBuffer.filled):
             rightSpectrum = self.buildSpectrum(self.rightBuffer.data)
-            rightSpectrum = self.avgRight.average(rightSpectrum)[0:width:1]
+            rightSpectrum = self.avgRight.average(rightSpectrum)
             rightPoints = self.drawSpectrum(rightSpectrum)
             freq = self.calcFreq(rightSpectrum, samplerate)
             self.printText("R Freq: {0:.2f}Hz {1}".format(freq, audio.pitch(freq)), 1, self.rightcolor)
@@ -171,23 +173,21 @@ class Scope(object):
         points = lpoints, rpoints
         return points
 
-    def drawFftBlocks(self, points):
+    def drawFftBlocks(self, points, color, chunkfun=utils.chunkMean):
         shape = []
         width, height = self.windowSize
         barWidth = width // self.numberFftBars
         values = [height - value[1] for value in points]
-        
 
         self.candy.fill((0, 0, 0))
         for x, chunk in enumerate(utils.chunks(values, barWidth)):
-            # barHeight = utils.chunkMean(chunk)
-            barHeight = utils.chunkFirstPoint(chunk)
+            barHeight = chunkfun(chunk)
             pos = (x * barWidth, 512 - barHeight)
             size = (barWidth, barHeight)
 
             bar = pygame.Surface(size)
             bar.set_alpha(int(0xff * 0.3))
-            bar.fill((0, 0xFF, 0))
+            bar.fill(color)
             pygame.draw.rect(bar, (0, 0, 0), (0, 0, *size), 2)
             self.surface.blit(bar, pos)
 
@@ -230,9 +230,12 @@ class Scope(object):
         leftshape, rightshape = self.drawSpectra(data, samplerate)
         if leftshape:
             pygame.draw.lines(self.surface, self.leftcolor, False, leftshape, 1)
-            self.drawFftBlocks(leftshape)
+            # self.drawFftBlocks(leftshape, (0, 0xff, 0), chunkfun=utils.chunkFirstPoint)
+            self.drawFftBlocks(leftshape, (0, 0xff, 0), chunkfun=utils.chunkMean)
         if rightshape:
             pygame.draw.lines(self.surface, self.rightcolor, False, rightshape, 1)
+            # self.drawFftBlocks(rightshape, (0, 0xff, 0), chunkfun=utils.chunkFirstPoint)
+            self.drawFftBlocks(rightshape, (0xff, 0, 0), chunkfun=utils.chunkMean)
 
 
         # draw the windowing function.
@@ -271,3 +274,9 @@ class Scope(object):
         print(">> exiting scope.")
         pygame.display.quit()
         pygame.quit()
+
+if __name__ == "__main__":
+    from pulseScope import AudioApp
+
+    with AudioApp() as audioapp:
+        audioapp.process()

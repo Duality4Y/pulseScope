@@ -11,8 +11,6 @@ class CandyMachine(object):
     def __init__(self, width=9, height=6):
         self.width, self.height = width, height
         self.surface = [[(0, 0, 0)] * self.width for y in range(0, self.height)]
-        for row in self.surface:
-            print(row)
 
     def drawPoint(self, x, y, color):
         if x < self.width and y < self.height:
@@ -45,10 +43,20 @@ class Artnet(object):
         self.port = port
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        self.sock.connect((self.ip, self.port))
+        self.initialized = self.hostExists(self.ip)
 
+    def hostExists(self, host):
+        try:
+            socket.gethostbyname(host)
+            return True
+        except Exception as e:
+            return False
+    
     def transmit(self, data):
         if self.sock is None:
+            return
+
+        if not self.initialized:
             return
 
         message = []
