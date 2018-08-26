@@ -15,7 +15,7 @@
 			"file": "pulseScope.py",
 			"settings":
 			{
-				"buffer_size": 2471,
+				"buffer_size": 2041,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
@@ -24,7 +24,16 @@
 			"file": "scope.py",
 			"settings":
 			{
-				"buffer_size": 9977,
+				"buffer_size": 10555,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "artnet.py",
+			"settings":
+			{
+				"buffer_size": 3406,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
@@ -33,17 +42,7 @@
 			"file": "audio.py",
 			"settings":
 			{
-				"buffer_size": 309,
-				"encoding": "UTF-8",
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "utils.py",
-			"settings":
-			{
-				"buffer_size": 2594,
-				"encoding": "UTF-8",
+				"buffer_size": 319,
 				"line_ending": "Unix"
 			}
 		}
@@ -325,6 +324,9 @@
 	],
 	"file_history":
 	[
+		"/home/robert/Documents/projects/pulseScope/artnet.py",
+		"/home/robert/Documents/projects/pulseScope/utils.py",
+		"/home/robert/Documents/projects/pulseScope/audio.py",
 		"/home/robert/Documents/projects/pulseScope/test.py",
 		"/home/robert/Documents/projects/pulseScope/pulseScope.sublime-project",
 		"/home/robert/Documents/projects/py-ledart/Ledart/DeviceInterfaces.py",
@@ -449,10 +451,7 @@
 		"/home/duality/ControlOne/sw/kernel/trunk/src/linux-2.6.38/arch/arm/mach-s3c64xx/mach-real6410.c",
 		"/home/duality/Documents/Tentoo/CommaIndustries/ControlOne/sw/kernel/trunk/src/linux-2.6.28.8/arch/arm/plat-s3c/include/plat/partition.h",
 		"/home/duality/Documents/Tentoo/CommaIndustries/ControlOne/sw/kernel/trunk/src/linux-2.6.28.8/fs/ubifs/super.c",
-		"/home/duality/Documents/Tentoo/CommaIndustries/ControlOne/sw/fs/trunk/src/patch.sh",
-		"/home/duality/Documents/Tentoo/CommaIndustries/ControlOne/sw/kernel/trunk/src/linux-2.6.28.8/config_TQ6410_A70",
-		"/home/duality/Documents/Tentoo/CommaIndustries/ControlOne/sw/kernel/trunk/src/linux-2.6.28.8/config_TQ6410_Q43",
-		"/home/duality/Documents/Tentoo/CommaIndustries/ControlOne/sw/kernel/trunk/src/linux-2.6.28.8/drivers/mtd/ubi/io.c"
+		"/home/duality/Documents/Tentoo/CommaIndustries/ControlOne/sw/fs/trunk/src/patch.sh"
 	],
 	"find":
 	{
@@ -470,6 +469,17 @@
 		"case_sensitive": true,
 		"find_history":
 		[
+			"print",
+			"utils.chunkMean",
+			"FramedBuffer",
+			"512",
+			"value",
+			"y",
+			"self.average",
+			"numblocks",
+			"chunkAverage",
+			"WaveFormScale",
+			"drawWaveForm",
 			"utils",
 			"utils.",
 			"FramedBuffer",
@@ -544,7 +554,7 @@
 	"groups":
 	[
 		{
-			"selected": 1,
+			"selected": 2,
 			"sheets":
 			[
 				{
@@ -553,15 +563,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 2471,
+						"buffer_size": 2041,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								2423,
-								2423
+								1547,
+								1547
 							]
 						],
 						"settings":
@@ -571,10 +581,10 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 676.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 3,
+					"stack_index": 2,
 					"type": "text"
 				},
 				{
@@ -583,15 +593,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 9977,
+						"buffer_size": 10555,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								936,
-								936
+								2059,
+								2059
 							]
 						],
 						"settings":
@@ -601,31 +611,67 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 1014.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 0,
+					"stack_index": 3,
 					"type": "text"
 				},
 				{
 					"buffer": 2,
-					"file": "audio.py",
+					"file": "artnet.py",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 309,
+						"buffer_size": 3406,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								11,
-								11
+								1512,
+								1512
 							]
 						],
 						"settings":
 						{
+							"git_annotation_temp_buffer": "/tmp/git_annotations_06t51k",
+							"git_annotation_temp_head": "/tmp/git_annotations_z4fsc7",
+							"live_git_annotations": true,
+							"syntax": "Packages/Python Improved/PythonImproved.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 1041.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "audio.py",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 319,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								27,
+								27
+							]
+						],
+						"settings":
+						{
+							"git_annotation_temp_buffer": "/tmp/git_annotations_zhqgio",
+							"git_annotation_temp_head": "/tmp/git_annotations_qowpud",
+							"live_git_annotations": true,
 							"syntax": "Packages/Python Improved/PythonImproved.tmLanguage"
 						},
 						"translation.x": 0.0,
@@ -633,36 +679,6 @@
 						"zoom_level": 1.0
 					},
 					"stack_index": 1,
-					"type": "text"
-				},
-				{
-					"buffer": 3,
-					"file": "utils.py",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 2594,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								1102,
-								1102
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Python Improved/PythonImproved.tmLanguage",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 2,
 					"type": "text"
 				}
 			]

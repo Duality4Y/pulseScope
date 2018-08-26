@@ -44,6 +44,8 @@ class Artnet(object):
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.initialized = self.hostExists(self.ip)
+        if self.initialized:
+            self.sock.connect((self.ip, self.port))
 
     def hostExists(self, host):
         try:

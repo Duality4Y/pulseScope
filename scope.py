@@ -61,6 +61,7 @@ class Scope(object):
 
         self.artnet = artnet.Artnet()
         self.candy = artnet.CandyMachine()
+        self.candyHeightScale = 11
 
     @property
     def windowSize(self):
@@ -176,13 +177,14 @@ class Scope(object):
     def drawFftBlocks(self, points, color, chunkfun=utils.chunkMean):
         shape = []
         width, height = self.windowSize
-        barWidth = width // self.numberFftBars
+        barWidth = width / self.numberFftBars
         values = [height - value[1] for value in points]
 
+        barHeightOffset = 512
         self.candy.fill((0, 0, 0))
-        for x, chunk in enumerate(utils.chunks(values, barWidth)):
+        for x, chunk in enumerate(utils.chunks(values, int(barWidth))):
             barHeight = chunkfun(chunk)
-            pos = (x * barWidth, 512 - barHeight)
+            pos = (x * barWidth, barHeightOffset - barHeight)
             size = (barWidth, barHeight)
 
             bar = pygame.Surface(size)
@@ -191,7 +193,8 @@ class Scope(object):
             pygame.draw.rect(bar, (0, 0, 0), (0, 0, *size), 2)
             self.surface.blit(bar, pos)
 
-            self.candy.drawHLine(0, x, barHeight // 40, (0, 0xFF, 0))
+            candyBarHeight = (barHeight / height) * self.candy.width * self.candyHeightScale
+            self.candy.drawHLine(0, x, candyBarHeight, (0, 0xFF, 0))
         self.artnet.transmit(bytes(self.candy))
         
         return shape
