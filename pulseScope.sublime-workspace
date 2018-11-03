@@ -24,7 +24,7 @@
 			"file": "scope.py",
 			"settings":
 			{
-				"buffer_size": 10555,
+				"buffer_size": 10830,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
@@ -33,8 +33,7 @@
 			"file": "artnet.py",
 			"settings":
 			{
-				"buffer_size": 3406,
-				"encoding": "UTF-8",
+				"buffer_size": 3487,
 				"line_ending": "Unix"
 			}
 		},
@@ -324,7 +323,10 @@
 	],
 	"file_history":
 	[
+		"/home/robert/.zshrc",
+		"/home/robert/Downloads/renze-artnet/artnetTx.py",
 		"/home/robert/Documents/projects/pulseScope/artnet.py",
+		"/home/robert/Downloads/renze-artnet/test.py",
 		"/home/robert/Documents/projects/pulseScope/utils.py",
 		"/home/robert/Documents/projects/pulseScope/audio.py",
 		"/home/robert/Documents/projects/pulseScope/test.py",
@@ -448,10 +450,7 @@
 		"/drivers/mtd/nand/nand_base.c",
 		"/home/duality/ControlOne/sw/kernel/trunk/src/linux-2.6.38/config_mini6410_n43",
 		"/home/duality/ControlOne/sw/kernel/trunk/src/linux-2.6.38/arch/arm/mach-s3c64xx/s3c6410.c",
-		"/home/duality/ControlOne/sw/kernel/trunk/src/linux-2.6.38/arch/arm/mach-s3c64xx/mach-real6410.c",
-		"/home/duality/Documents/Tentoo/CommaIndustries/ControlOne/sw/kernel/trunk/src/linux-2.6.28.8/arch/arm/plat-s3c/include/plat/partition.h",
-		"/home/duality/Documents/Tentoo/CommaIndustries/ControlOne/sw/kernel/trunk/src/linux-2.6.28.8/fs/ubifs/super.c",
-		"/home/duality/Documents/Tentoo/CommaIndustries/ControlOne/sw/fs/trunk/src/patch.sh"
+		"/home/duality/ControlOne/sw/kernel/trunk/src/linux-2.6.38/arch/arm/mach-s3c64xx/mach-real6410.c"
 	],
 	"find":
 	{
@@ -469,6 +468,11 @@
 		"case_sensitive": true,
 		"find_history":
 		[
+			"execute",
+			"self.numberFftBars",
+			"barheight",
+			"candyMaxBarHeight",
+			"candyHeight",
 			"print",
 			"utils.chunkMean",
 			"FramedBuffer",
@@ -554,7 +558,7 @@
 	"groups":
 	[
 		{
-			"selected": 2,
+			"selected": 0,
 			"sheets":
 			[
 				{
@@ -570,21 +574,24 @@
 						"selection":
 						[
 							[
-								1547,
-								1547
+								234,
+								234
 							]
 						],
 						"settings":
 						{
+							"git_annotation_temp_buffer": "/tmp/git_annotations_wak80n",
+							"git_annotation_temp_head": "/tmp/git_annotations_ysva_i",
+							"live_git_annotations": true,
 							"syntax": "Packages/Python Improved/PythonImproved.tmLanguage",
 							"tab_size": 4,
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 676.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 2,
+					"stack_index": 0,
 					"type": "text"
 				},
 				{
@@ -593,28 +600,31 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 10555,
+						"buffer_size": 10830,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								2059,
-								2059
+								874,
+								874
 							]
 						],
 						"settings":
 						{
+							"git_annotation_temp_buffer": "/tmp/git_annotations_v905th",
+							"git_annotation_temp_head": "/tmp/git_annotations_m06_qs",
+							"live_git_annotations": true,
 							"syntax": "Packages/Python Improved/PythonImproved.tmLanguage",
 							"tab_size": 4,
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 1014.0,
+						"translation.y": 3570.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 3,
+					"stack_index": 1,
 					"type": "text"
 				},
 				{
@@ -623,31 +633,31 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 3406,
+						"buffer_size": 3487,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								1512,
-								1512
+								0,
+								0
 							]
 						],
 						"settings":
 						{
-							"git_annotation_temp_buffer": "/tmp/git_annotations_06t51k",
-							"git_annotation_temp_head": "/tmp/git_annotations_z4fsc7",
+							"git_annotation_temp_buffer": "/tmp/git_annotations_xh0qfz",
+							"git_annotation_temp_head": "/tmp/git_annotations_og1au5",
 							"live_git_annotations": true,
 							"syntax": "Packages/Python Improved/PythonImproved.tmLanguage",
 							"tab_size": 4,
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 1041.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 0,
+					"stack_index": 2,
 					"type": "text"
 				},
 				{
@@ -678,7 +688,7 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 1,
+					"stack_index": 3,
 					"type": "text"
 				}
 			]
@@ -741,16 +751,16 @@
 	},
 	"select_project":
 	{
-		"height": 501.0,
+		"height": 808.0,
 		"last_filter": "",
 		"selected_items":
 		[
 			[
 				"",
-				"~/Documents/projects/py-ledart/pyledart.sublime-workspace"
+				"~/Documents/projects/cpp-opengl/opengl.sublime-project"
 			]
 		],
-		"width": 381.0
+		"width": 614.0
 	},
 	"select_symbol":
 	{

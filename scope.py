@@ -24,8 +24,9 @@ class Scope(object):
 
         # fft scale to window, so fftHeightScale = 2 = max height half the window height (height / 2)
         # self.fftHeightScale = 1024 / (13 * 32) # i want it to go to the 13'th bar.
-        self.fftHeightScale = 2
+        self.fftHeightScale = 1
         self.fftBinScale = 8
+        # self.fftBinScale = 2
 
         self.leftcolor = (0, 0xff, 0xff)
         self.rightcolor = (0xff, 0, 0xff)
@@ -58,6 +59,7 @@ class Scope(object):
         
         self.waveFormScale = 3
         self.numberFftBars = 6 * 2 + 20
+        # self.numberFftBars = 6
 
         self.artnet = artnet.Artnet()
         self.candy = artnet.CandyMachine()
@@ -174,10 +176,10 @@ class Scope(object):
         points = lpoints, rpoints
         return points
 
-    def drawFftBlocks(self, points, color, chunkfun=utils.chunkMean):
+    def drawFftBlocks(self, points, color, numbars, chunkfun=utils.chunkMean):
         shape = []
         width, height = self.windowSize
-        barWidth = width / self.numberFftBars
+        barWidth = width / numbars
         values = [height - value[1] for value in points]
 
         barHeightOffset = 512
@@ -234,11 +236,11 @@ class Scope(object):
         if leftshape:
             pygame.draw.lines(self.surface, self.leftcolor, False, leftshape, 1)
             # self.drawFftBlocks(leftshape, (0, 0xff, 0), chunkfun=utils.chunkFirstPoint)
-            self.drawFftBlocks(leftshape, (0, 0xff, 0), chunkfun=utils.chunkMean)
+            self.drawFftBlocks(leftshape, (0, 0xff, 0), self.numberFftBars, chunkfun=utils.chunkMean)
         if rightshape:
             pygame.draw.lines(self.surface, self.rightcolor, False, rightshape, 1)
             # self.drawFftBlocks(rightshape, (0, 0xff, 0), chunkfun=utils.chunkFirstPoint)
-            self.drawFftBlocks(rightshape, (0xff, 0, 0), chunkfun=utils.chunkMean)
+            self.drawFftBlocks(rightshape, (0xff, 0, 0), self.numberFftBars, chunkfun=utils.chunkMean)
 
 
         # draw the windowing function.

@@ -14,7 +14,7 @@ import audio
 import artnet
 from scope import Scope
 
-samplerate = 44800
+samplerate = 44100
 chunksize = (1 << 10)
 scope = Scope(samplerate, chunksize)
 
