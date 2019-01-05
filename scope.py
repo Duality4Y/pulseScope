@@ -47,9 +47,9 @@ class Scope(object):
         self.window = None
         # self.window = numpy.bartlett(width)
         # self.window = numpy.blackman(width)
-        self.window = numpy.hamming(width)
-        self.window = numpy.kaiser(width * 2, 5.0)
-        self.drawWindowShape = False
+        # self.window = numpy.hamming(width)
+        # self.window = numpy.kaiser(width * 2, 5.0)
+        self.drawWindowShape = True
 
         self.windowpoints = []
         if self.window is not None:
@@ -61,9 +61,17 @@ class Scope(object):
         self.numberFftBars = 6 * 2 + 20
         # self.numberFftBars = 6
 
+        """
         self.artnet = artnet.Artnet()
         self.candy = artnet.CandyMachine()
+        """
+        
+        self.artnet = None
+        self.candy = None
+
         self.candyHeightScale = 11
+
+        self.drawTheFftBlocks = True
 
     @property
     def windowSize(self):
@@ -183,7 +191,10 @@ class Scope(object):
         values = [height - value[1] for value in points]
 
         barHeightOffset = 512
-        self.candy.fill((0, 0, 0))
+        
+        if self.candy != None:
+            self.candy.fill((0, 0, 0))
+        
         for x, chunk in enumerate(utils.chunks(values, int(barWidth))):
             barHeight = chunkfun(chunk)
             pos = (x * barWidth, barHeightOffset - barHeight)
@@ -195,9 +206,12 @@ class Scope(object):
             pygame.draw.rect(bar, (0, 0, 0), (0, 0, *size), 2)
             self.surface.blit(bar, pos)
 
-            candyBarHeight = (barHeight / height) * self.candy.width * self.candyHeightScale
-            self.candy.drawHLine(0, x, candyBarHeight, (0, 0xFF, 0))
-        self.artnet.transmit(bytes(self.candy))
+            if self.candy != None:
+                candyBarHeight = (barHeight / height) * self.candy.width * self.candyHeightScale
+                self.candy.drawHLine(0, x, candyBarHeight, (0, 0xFF, 0))
+
+        if self.artnet != None:
+            self.artnet.transmit(bytes(self.candy))
         
         return shape
 
@@ -235,16 +249,16 @@ class Scope(object):
         leftshape, rightshape = self.drawSpectra(data, samplerate)
         if leftshape:
             pygame.draw.lines(self.surface, self.leftcolor, False, leftshape, 1)
-            # self.drawFftBlocks(leftshape, (0, 0xff, 0), chunkfun=utils.chunkFirstPoint)
-            self.drawFftBlocks(leftshape, (0, 0xff, 0), self.numberFftBars, chunkfun=utils.chunkMean)
+            if self.drawTheFftBlocks:
+                self.drawFftBlocks(leftshape, (0, 0xff, 0), self.numberFftBars, chunkfun=utils.chunkMean)
         if rightshape:
             pygame.draw.lines(self.surface, self.rightcolor, False, rightshape, 1)
-            # self.drawFftBlocks(rightshape, (0, 0xff, 0), chunkfun=utils.chunkFirstPoint)
-            self.drawFftBlocks(rightshape, (0xff, 0, 0), self.numberFftBars, chunkfun=utils.chunkMean)
+            if self.drawTheFftBlocks:
+                self.drawFftBlocks(rightshape, (0xff, 0, 0), self.numberFftBars, chunkfun=utils.chunkMean)
 
 
         # draw the windowing function.
-        if self.drawWindowShape:
+        if self.drawWindowShape and self.window is not None:
             pygame.draw.lines(self.surface, (0xff, 0, 0), False, self.windowpoints, 1)
 
         
