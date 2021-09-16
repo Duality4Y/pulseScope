@@ -20,12 +20,12 @@ class Scope(object):
         self.font = pygame.font.SysFont('Times New Roman', 28)
 
         self.pointcalc = pointcalc
-        self.xyEnabled = False
+        self.xyEnabled = True
 
         # fft scale to window, so fftHeightScale = 2 = max height half the window height (height / 2)
         # self.fftHeightScale = 1024 / (13 * 32) # i want it to go to the 13'th bar.
         self.fftHeightScale = 1
-        self.fftBinScale = 8
+        self.fftBinScale = 4
         # self.fftBinScale = 2
 
         self.leftcolor = (0, 0xff, 0xff)
@@ -40,37 +40,36 @@ class Scope(object):
         self.leftBuffer = utils.Buffer(length=fftFrameSize, chunksize=self.chunksize)
         self.rightBuffer = utils.Buffer(length=fftFrameSize, chunksize=self.chunksize)
 
-        self.bufferedLine = utils.Buffer(length=3, chunksize=self.chunksize)
+        self.bufferedLine = utils.Buffer(length=1, chunksize=self.chunksize)
         self.maxDistance = 0
 
         width, height = self.windowSize
         self.window = None
-        # self.window = numpy.bartlett(width)
-        # self.window = numpy.blackman(width)
-        # self.window = numpy.hamming(width)
-        # self.window = numpy.kaiser(width * 2, 5.0)
+        # self.window = ["barlett", numpy.bartlett(width)]
+        # self.window = ["blackman", numpy.blackman(width)]
+        # self.window = ["hamming", numpy.hamming(width)]
+        self.window = ["kaiser", numpy.kaiser(width * 2, 5.0)]
         self.drawWindowShape = True
 
         self.windowpoints = []
         if self.window is not None:
-            for x, value in enumerate(self.window):
+            for x, value in enumerate(self.window[1]):
                 point = (x, int(height - (value * height)))
                 self.windowpoints.append(point)
         
-        self.waveFormScale = 3
+        self.waveFormScale = 10
+
         self.numberFftBars = 6 * 2 + 20
         # self.numberFftBars = 6
-
         """
         self.artnet = artnet.Artnet()
         self.candy = artnet.CandyMachine()
         """
-        
         self.artnet = None
         self.candy = None
+        self.candyHeightScale = 1
 
-        self.candyHeightScale = 11
-
+        self.displayInfo = False
         self.drawTheFftBlocks = True
 
     @property
@@ -79,10 +78,10 @@ class Scope(object):
 
     # prints text on the screen on line
     # line is in increments of font height.
-    def printText(self, text, line, color):
+    def printText(self, text, line, color=(0xff, 0xff, 0xff), x_offset=0, y_offset=0):
         self.textsurface = self.font.render(text, True, color)
         x, y, width, height = self.textsurface.get_rect()
-        self.surface.blit(self.textsurface, (0, line * height))
+        self.surface.blit(self.textsurface, (x + x_offset, line * height + y_offset))
 
     # build a specturm (list of values) from data.
     # (fft spectrum)
@@ -93,9 +92,8 @@ class Scope(object):
         spectrum = numpy.fft.fft(data, n=self.fftBinScale * width)
         real_spectrum = numpy.absolute(spectrum)
         if self.window is not None:
-            for x, scaler in enumerate(self.window):
+            for x, scaler in enumerate(self.window[1]):
                 real_spectrum[x] = real_spectrum[x] * scaler
-        width, height = self.windowSize
 
         return real_spectrum
 
@@ -166,20 +164,34 @@ class Scope(object):
 
         """ Simply loop through all the points of data scale them right, and plot them. """
         lpoints = []
-        for x, chunk in enumerate(utils.chunks(lchannel_data, round(len(lchannel_data) / width))):
-            value = self.pointcalc(chunk) * self.waveFormScale
-            if numpy.isnan(value) or numpy.isinf(value):
-                value = 0
-            y = int(height * 0.20 - (value / ((1 << 32) - 1) * (height / 2.0)))
-            point = (x, y)
-            lpoints.append(point)
+        if(len(lchannel_data) < width):
+            for x in range(0, len(lchannel_data), 1):
+                value = self.pointcalc([lchannel_data[x]])
+                y = int(height * 0.20 - (value / ((1 << 32) - 1) * (height / 2.0)))
+                point = (x, y)
+                lpoints.append(point)
+        else:
+            for x, chunk in enumerate(utils.chunks(lchannel_data, round(len(lchannel_data) / width))):
+                value = self.pointcalc(chunk) * self.waveFormScale
+                if numpy.isnan(value) or numpy.isinf(value):
+                    value = 0
+                y = int(height * 0.20 - (value / ((1 << 32) - 1) * (height / 2.0)))
+                point = (x, y)
+                lpoints.append(point)
 
         rpoints = []
-        for x, chunk in enumerate(utils.chunks(rchannel_data, round(len(rchannel_data) / width))):
-            value = self.pointcalc(chunk) * self.waveFormScale
-            y = int(height * 0.50 - (value / ((1 << 32) - 1) * (height / 2.0)))
-            point = (x, y)
-            rpoints.append(point)
+        if(len(rchannel_data) < width):
+            for x in range(0, len(rchannel_data), 1):
+                value = rchannel_data[x]
+                y = int(height * 0.50 - (value / ((1 << 32) - 1) * (height / 2.0)))
+                point = (x, y)
+                rpoints.append(point)
+        else:
+            for x, chunk in enumerate(utils.chunks(rchannel_data, round(len(rchannel_data) / width))):
+                value = self.pointcalc(chunk) * self.waveFormScale
+                y = int(height * 0.50 - (value / ((1 << 32) - 1) * (height / 2.0)))
+                point = (x, y)
+                rpoints.append(point)
 
         points = lpoints, rpoints
         return points
@@ -239,38 +251,42 @@ class Scope(object):
 
         # draw a representation of the wave form shape.
         # time is samplerate / 1024
-        leftshape, rightshape = self.drawWaveForm(data, samplerate)
-        if leftshape:
-            pygame.draw.lines(self.surface, self.leftcolor, False, leftshape, 1)
-        if rightshape:
-            pygame.draw.lines(self.surface, self.rightcolor, False, rightshape, 1)
+        # leftshape, rightshape = self.drawWaveForm(data, samplerate)
+        # if leftshape:
+        #     pygame.draw.lines(self.surface, self.leftcolor, False, leftshape, 1)
+        # if rightshape:
+        #     pygame.draw.lines(self.surface, self.rightcolor, False, rightshape, 1)
 
         # draw freq spectra
-        leftshape, rightshape = self.drawSpectra(data, samplerate)
-        if leftshape:
-            pygame.draw.lines(self.surface, self.leftcolor, False, leftshape, 1)
-            if self.drawTheFftBlocks:
-                self.drawFftBlocks(leftshape, (0, 0xff, 0), self.numberFftBars, chunkfun=utils.chunkMean)
-        if rightshape:
-            pygame.draw.lines(self.surface, self.rightcolor, False, rightshape, 1)
-            if self.drawTheFftBlocks:
-                self.drawFftBlocks(rightshape, (0xff, 0, 0), self.numberFftBars, chunkfun=utils.chunkMean)
+        # leftshape, rightshape = self.drawSpectra(data, samplerate)
+        # if leftshape:
+        #     pygame.draw.lines(self.surface, self.leftcolor, False, leftshape, 1)
+        #     if self.drawTheFftBlocks:
+        #         self.drawFftBlocks(leftshape, (0, 0xff, 0), self.numberFftBars, chunkfun=utils.chunkMean)
+        # if rightshape:
+        #     pygame.draw.lines(self.surface, self.rightcolor, False, rightshape, 1)
+        #     if self.drawTheFftBlocks:
+        #         self.drawFftBlocks(rightshape, (0xff, 0, 0), self.numberFftBars, chunkfun=utils.chunkMean)
 
 
         # draw the windowing function.
-        if self.drawWindowShape and self.window is not None:
-            pygame.draw.lines(self.surface, (0xff, 0, 0), False, self.windowpoints, 1)
+        # if self.drawWindowShape and self.window is not None:
+        #     pygame.draw.lines(self.surface, (0xff, 0, 0), False, self.windowpoints, 1)
 
         
         # tries to emulate XY mode on scope.
         if self.xyEnabled:
             shape = self.drawXY(data)
-            self.bufferedLine.add(shape)
-            shape = self.bufferedLine.data
+            # self.bufferedLine.add(shape)
+            # shape = self.bufferedLine.data
             if shape is not None:
                 # pygame.draw.aalines(self.surface, (0, 0xff, 0), False, shape, 1)
                 for p1, p2 in zip(shape[0:-1], shape[1::]):
                     pygame.draw.line(self.surface, (0, 0xff, 0), p1, p2, 1)
+
+        # Display some info.
+        # if self.displayInfo:
+        #     self.printText(str.format("Windowing function: {0}", self.window[0]), 0, (0xff, 0xff, 0xff), x_offset=200)
 
         pygame.display.update()
 
@@ -287,6 +303,8 @@ class Scope(object):
                     return True
                 if event.key in (pygame.K_q, pygame.K_ESCAPE):
                     return True
+                if event.key == pygame.K_i:
+                    self.displayInfo = not self.displayInfo
         return False
 
     def quit(self):

@@ -12,10 +12,13 @@ from operator import itemgetter
 import utils
 import audio
 import artnet
+import time
 from scope import Scope
 
-samplerate = 44100
-chunksize = (1 << 10)
+samplerate = 48100
+# chunksize = 105 * 10
+chunksize = (1 << 12)
+# chunksize = 1024
 scope = Scope(samplerate, chunksize)
 
 class AudioApp(object):
@@ -68,6 +71,7 @@ class AudioApp(object):
                 if self.new_data:
                     self.new_data = False
                     scope.draw(self.data, self.rate)
+            # time.sleep(1 / 30.)
 
 if __name__ == "__main__":
     with AudioApp() as app:
