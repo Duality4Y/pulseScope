@@ -20,7 +20,10 @@ class Scope(object):
         self.font = pygame.font.SysFont('Times New Roman', 28)
 
         self.pointcalc = pointcalc
-        self.xyEnabled = True
+        self.xyEnabled = False
+        self.tracingEnabled = True
+        self.fftEnabled = False
+        self.candyMachineEnabled = False
 
         # fft scale to window, so fftHeightScale = 2 = max height half the window height (height / 2)
         # self.fftHeightScale = 1024 / (13 * 32) # i want it to go to the 13'th bar.
@@ -32,7 +35,7 @@ class Scope(object):
         self.rightcolor = (0xff, 0, 0xff)
 
 
-        self.fftAverage = 6
+        self.fftAverage = 4
         self.avgLeft = utils.Average(size=self.fftAverage)
         self.avgRight = utils.Average(size=self.fftAverage)
 
@@ -251,27 +254,29 @@ class Scope(object):
 
         # draw a representation of the wave form shape.
         # time is samplerate / 1024
-        # leftshape, rightshape = self.drawWaveForm(data, samplerate)
-        # if leftshape:
-        #     pygame.draw.lines(self.surface, self.leftcolor, False, leftshape, 1)
-        # if rightshape:
-        #     pygame.draw.lines(self.surface, self.rightcolor, False, rightshape, 1)
+        if self.tracingEnabled:
+            leftshape, rightshape = self.drawWaveForm(data, samplerate)
+            if leftshape:
+                pygame.draw.lines(self.surface, self.leftcolor, False, leftshape, 1)
+            if rightshape:
+                pygame.draw.lines(self.surface, self.rightcolor, False, rightshape, 1)
 
         # draw freq spectra
-        # leftshape, rightshape = self.drawSpectra(data, samplerate)
-        # if leftshape:
-        #     pygame.draw.lines(self.surface, self.leftcolor, False, leftshape, 1)
-        #     if self.drawTheFftBlocks:
-        #         self.drawFftBlocks(leftshape, (0, 0xff, 0), self.numberFftBars, chunkfun=utils.chunkMean)
-        # if rightshape:
-        #     pygame.draw.lines(self.surface, self.rightcolor, False, rightshape, 1)
-        #     if self.drawTheFftBlocks:
-        #         self.drawFftBlocks(rightshape, (0xff, 0, 0), self.numberFftBars, chunkfun=utils.chunkMean)
+        if self.fftEnabled:
+            leftshape, rightshape = self.drawSpectra(data, samplerate)
+            if leftshape:
+                pygame.draw.lines(self.surface, self.leftcolor, False, leftshape, 1)
+                if self.drawTheFftBlocks:
+                    self.drawFftBlocks(leftshape, (0, 0xff, 0), self.numberFftBars, chunkfun=utils.chunkMean)
+            if rightshape:
+                pygame.draw.lines(self.surface, self.rightcolor, False, rightshape, 1)
+                if self.drawTheFftBlocks:
+                    self.drawFftBlocks(rightshape, (0xff, 0, 0), self.numberFftBars, chunkfun=utils.chunkMean)
 
 
         # draw the windowing function.
-        # if self.drawWindowShape and self.window is not None:
-        #     pygame.draw.lines(self.surface, (0xff, 0, 0), False, self.windowpoints, 1)
+        if self.drawWindowShape and self.window is not None:
+            pygame.draw.lines(self.surface, (0xff, 0, 0), False, self.windowpoints, 1)
 
         
         # tries to emulate XY mode on scope.
@@ -299,6 +304,16 @@ class Scope(object):
                 mods = event.mod
                 key_mod = pygame.KMOD_LCTRL
                 lctrlpressed = (mods & key_mod) == key_mod
+                if event.key == pygame.K_w:
+                    self.tracingEnabled = not self.tracingEnabled
+                if event.key == pygame.K_f:
+                    self.fftEnabled = not self.fftEnabled
+                if event.key == pygame.K_s:
+                    self.candyMachineEnabled = not self.candyMachineEnabled
+                    self.drawTheFftBlocks = not self.drawTheFftBlocks
+                if event.key == pygame.K_x:
+                    self.xyEnabled = not self.xyEnabled
+                    print(self.xyEnabled)
                 if event.key == pygame.K_c and lctrlpressed:
                     return True
                 if event.key in (pygame.K_q, pygame.K_ESCAPE):
