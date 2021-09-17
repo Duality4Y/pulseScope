@@ -32,6 +32,8 @@ pyaudio
 simply run the pulseScope.py script with python3.6
 
 # Todo
+[] trigger function for tracing output
+
 [] implement adjusting the scaling of the spectrum
 
 [] implement adjusting spectrum smoothing.
