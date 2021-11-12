@@ -21,14 +21,14 @@ class Scope(object):
 
         self.pointcalc = pointcalc
         self.xyEnabled = False
-        self.tracingEnabled = True
-        self.fftEnabled = False
+        self.tracingEnabled = False
+        self.fftEnabled = True
         self.candyMachineEnabled = False
 
         # fft scale to window, so fftHeightScale = 2 = max height half the window height (height / 2)
         # self.fftHeightScale = 1024 / (13 * 32) # i want it to go to the 13'th bar.
-        self.fftHeightScale = 1
-        self.fftBinScale = 4
+        self.fftHeightScale = 0.5
+        self.fftBinScale = 6
         # self.fftBinScale = 2
 
         self.leftcolor = (0, 0xff, 0xff)
@@ -60,7 +60,7 @@ class Scope(object):
                 point = (x, int(height - (value * height)))
                 self.windowpoints.append(point)
         
-        self.waveFormScale = 10
+        self.waveFormScale = 10 * 2
 
         self.numberFftBars = 6 * 2 + 20
         # self.numberFftBars = 6
@@ -316,6 +316,8 @@ class Scope(object):
                     print(self.xyEnabled)
                 if event.key == pygame.K_c and lctrlpressed:
                     return True
+                elif event.key == pygame.K_c:
+                    self.drawTheFftBlocks = not self.drawTheFftBlocks
                 if event.key in (pygame.K_q, pygame.K_ESCAPE):
                     return True
                 if event.key == pygame.K_i:

@@ -17,8 +17,9 @@ from scope import Scope
 
 samplerate = 48100
 # chunksize = 105 * 10
-chunksize = (1 << 12)
-# chunksize = 1024
+# chunksize = (1 << 12)
+chunksize = 1024
+# chunksize = 440
 scope = Scope(samplerate, chunksize)
 
 class AudioApp(object):
